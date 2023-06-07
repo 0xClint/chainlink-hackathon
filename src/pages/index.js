@@ -1,2 +1,5 @@
 export { default as Home } from "./Home";
+export { default as Category } from "./Category";
+export { default as ProductResult } from "./ProductResult";
+export { default as Product } from "./Product";
 // export { default as  } from "./";
