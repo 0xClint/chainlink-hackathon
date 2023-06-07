@@ -1,4 +1,3 @@
-import "./App.css";
 import { Footer, Header } from "./components";
 import { Home } from "./pages";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -12,7 +11,7 @@ function App() {
           <Route path="/" exact element={<Home />} />
         </Routes>
       </Router>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 }
