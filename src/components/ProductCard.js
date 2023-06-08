@@ -13,7 +13,7 @@ const ProductCard = () => {
           <p className="font-normal">₹74999</p>
         </div>
         <div className="w-full h-[2px] bg-[#EDEDED] my-1"></div>
-        <p className="text-[#249B3E]">Save - ₹32999</p>
+        <p className="text-[#249B3E]">CO2 Footprint - 850g</p>
       </div>
     </div>
   );
