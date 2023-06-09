@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ProductCard,
   CategoryCard,
@@ -8,6 +8,7 @@ import {
 } from "../components";
 import { ArrowRight } from "../assets";
 import { Link } from "react-router-dom";
+import supabase from "../config/supabase";
 
 const cardData = [
   { id: 1 },
@@ -19,6 +20,34 @@ const cardData = [
 ];
 
 const Home = () => {
+  const [productData, setProductData] = useState();
+  const [electronics, setElectronics] = useState();
+  const [grocery, setGrocery] = useState();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const { data, error } = await supabase
+        .from("Products") // Name of Table
+        .select();
+
+      if (error) {
+        console.log("error");
+        console.log(error);
+      }
+      if (data) {
+        console.log("data");
+        await setElectronics(
+          await data.filter((item) => item["category"] == "Electronics")
+        );
+        await setGrocery(
+          await data.filter((item) => item["category"] == "Grocery")
+        );
+        await setProductData(data);
+      }
+    };
+    fetchProducts();
+  }, []);
+  console.log(productData);
   return (
     <div>
       <Header />
@@ -62,10 +91,12 @@ const Home = () => {
               <div className="w-[110px] h-[2px] bg-primaryColor"></div>
             </div>
           </div>
-          <div className="cardContainer w-[100%] flex justify-center gap-5 my-5">
-            {cardData.map(({ id }) => {
-              return <ProductCard key={id} />;
-            })}
+          <div className="cardContainer w-[100%] flex justify-start gap-5 my-5">
+            {electronics
+              ? electronics.map((data) => {
+                  return <ProductCard key={data.pid} data={data} />;
+                })
+              : ""}
           </div>
         </div>
         <div className="CategorySection mx-[5%] my-10">
@@ -83,10 +114,12 @@ const Home = () => {
               <div className="w-[110px] h-[2px] bg-primaryColor"></div>
             </div>
           </div>
-          <div className="cardContainer w-[100%] flex justify-center gap-5 my-5">
-            {cardData.map(({ id }) => {
-              return <ProductCard key={id} />;
-            })}
+          <div className="cardContainer w-[100%] flex justify-start gap-5 my-5">
+            {grocery
+              ? grocery.map((data) => {
+                  return <ProductCard key={data.pid} data={data} />;
+                })
+              : ""}
           </div>
         </div>
         <div className="CategorySection mx-[5%] my-10">

@@ -6,6 +6,7 @@ import {
   Payment,
   Success,
   CreateUser,
+  Orders,
 } from "./pages";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Seller/Dashboard";
@@ -25,6 +26,7 @@ function App() {
           <Route path="/seller/dashboard" exact element={<Dashboard />} />
           <Route path="/delivery" exact element={<Deliver />} />
           <Route path="/create/user" exact element={<CreateUser />} />
+          <Route path="/orders" exact element={<Orders />} />
         </Routes>
       </Router>
     </div>

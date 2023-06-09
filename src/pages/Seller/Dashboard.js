@@ -1,14 +1,65 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Footer, Header } from "../../components";
 import { ethers } from "ethers";
 import Lottie from "react-lottie-player";
 import loaderGif from "../../assets/loader.json";
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../../contract/constant";
+import supabase from "../../config/supabase";
 
 const Dashboard = () => {
   const [loader, setLoader] = useState(false);
   const [orderID, setOrderID] = useState("");
   const [address, setAddress] = useState("");
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const { data, error } = await supabase
+        .from("Orders") // Name of Table
+        // .select()
+        // .select(
+        //   `Users (name,address),Products (name,price,category,description,cfootprint,purl,seller)`
+        // )
+        .select(`*,Products (Sellers(*))`)
+        .eq("user", "0x562f28a7F5B904a6523FF705881Cb8c60aa794CB");
+
+      if (error) {
+        // setFetchError("Could not fetch Users");
+        // setTests(null);
+        console.log(error);
+      }
+      if (data) {
+        // setTests(data);
+        console.log(data);
+        // setFetchError(null);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const { data, error } = await supabase
+        .from("Orders") // Name of Table
+        // .select()
+        // .select(
+        //   `Users (name,address),Products (name,price,category,description,cfootprint,purl,seller)`
+        // )
+        .select(`*,Products (*,Sellers(*)),Users(*)`)
+        .eq("user", "0x562f28a7F5B904a6523FF705881Cb8c60aa794CB");
+
+      if (error) {
+        // setFetchError("Could not fetch Users");
+        // setTests(null);
+        console.log(error);
+      }
+      if (data) {
+        // setTests(data);
+        console.log(data);
+        // setFetchError(null);
+      }
+    };
+    fetchUsers();
+  }, []);
 
   const assignDelivery = async () => {
     // if (orderID) {

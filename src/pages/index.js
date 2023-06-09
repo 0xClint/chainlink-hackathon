@@ -5,4 +5,5 @@ export { default as Product } from "./Product";
 export { default as Payment } from "./Payment";
 export { default as Success } from "./Success";
 export { default as CreateUser } from "./CreateUser";
+export { default as Orders } from "./Orders";
 // export { default as  } from "./";
