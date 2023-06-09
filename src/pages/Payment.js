@@ -1,9 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import { Footer, Header } from "../components";
+import Lottie from "react-lottie-player";
+import loaderGif from "../assets/loader.json";
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../contract/constant";
+import { ethers } from "ethers";
 
 const Payment = () => {
+  const [loader, setLoader] = useState(false);
+
+  const payNow = async () => {
+    setLoader(true);
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      CONTRACT_ADDRESS,
+      CONTRACT_ABI,
+      signer
+    );
+    const tx = await contract.placeOrder(2, 1, {
+      value: ethers.utils.parseEther("0.0005"),
+    });
+    const receipt = await tx.wait();
+    console.log(Number(receipt.logs[0].topics[1]));
+    setLoader(false);
+  };
   return (
     <div>
+      {loader && (
+        <div
+          className="fixed w-screen h-screen bg-slate-500 flex justify-center items-center"
+          style={{ background: "rgba(255, 255, 255, 0.65)" }}
+        >
+          <Lottie
+            loop
+            animationData={loaderGif}
+            play
+            style={{
+              width: 200,
+              height: 200,
+            }}
+          />
+        </div>
+      )}
       <Header />
       <div className="w-[100vw]">
         <ul className="flex justify-center gap-3 font-medium text-[0.9rem] my-3">
@@ -91,7 +130,10 @@ const Payment = () => {
           <p className="text-[#E51F1F] mt-3 mb-1 text-center">
             Please provide valid address.
           </p>
-          <div className="text-[1.3rem] font-medium cursor-pointer text-[#ffffff] text-center bg-primaryColor py-3 px-4 rounded-lg  hover:bg-[#007AAF]">
+          <div
+            onClick={() => payNow()}
+            className="text-[1.3rem] font-medium cursor-pointer text-[#ffffff] text-center bg-primaryColor py-3 px-4 rounded-lg  hover:bg-[#007AAF]"
+          >
             PAY NOW
           </div>
         </div>

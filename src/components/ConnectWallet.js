@@ -49,7 +49,7 @@ const ConnectWallet = () => {
           <div className="h-9 w-[2px] bg-[#D9D9D9] mx-3"></div>
           <div className="flex items-center gap-1 cursor-pointer">
             <CartIcon className="h-7 w-7" />
-            <p>Cart</p>
+            <p>Orders</p>
           </div>
         </div>
       ) : (
