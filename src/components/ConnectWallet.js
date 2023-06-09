@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useMoralis } from "react-moralis";
 import { CartIcon, UserIcon } from "../assets";
+import { Link } from "react-router-dom";
 
 const ConnectWallet = () => {
   const {
@@ -47,10 +48,12 @@ const ConnectWallet = () => {
             </p>
           </div>
           <div className="h-9 w-[2px] bg-[#D9D9D9] mx-3"></div>
-          <div className="flex items-center gap-1 cursor-pointer">
-            <CartIcon className="h-7 w-7" />
-            <p>Orders</p>
-          </div>
+          <Link to="/orders">
+            <div className="flex items-center gap-1 cursor-pointer">
+              <CartIcon className="h-7 w-7" />
+              <p>Orders</p>
+            </div>
+          </Link>
         </div>
       ) : (
         // </Link>

@@ -4,6 +4,7 @@ import Lottie from "react-lottie-player";
 import loaderGif from "../assets/loader.json";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../contract/constant";
 import { ethers } from "ethers";
+var converter = require("hex2dec");
 
 const Success = () => {
   const [OTP, setOTP] = useState(false);
@@ -20,15 +21,16 @@ const Success = () => {
       CONTRACT_ABI,
       signer
     );
-    const tx1 = await contract.generateOTP(6);
+    const tx1 = await contract.generateOTP(1);
     const receipt1 = await tx1.wait();
     console.log(receipt1);
-    console.log(Number(receipt1.logs[0].topics[1]));
+    // console.log(Number(receipt1.logs[0].topics[1]));
     // setLoader(false);
     // const tx2 = await contract.getMyOTP(2);
     // const receipt2 = await tx2.wait();
     // console.log(receipt2);
   };
+
   const tempOTP = async () => {
     // setLoader(true);
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -39,7 +41,13 @@ const Success = () => {
       CONTRACT_ABI,
       signer
     );
-    const tx1 = await contract.getMyOTP(6);
+
+    const tx1 = await contract.getMyOTP(
+      converter.hexToDec(
+        "0xe493cc40cbb70aacdf6506cebf75469d208eb769aa423864621580b40e795bfc"
+      ),
+      1
+    );
     const receipt1 = await tx1.wait();
     console.log(receipt1);
   };

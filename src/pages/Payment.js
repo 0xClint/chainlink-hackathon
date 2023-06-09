@@ -1,32 +1,115 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Footer, Header } from "../components";
 import Lottie from "react-lottie-player";
 import loaderGif from "../assets/loader.json";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../contract/constant";
 import { ethers } from "ethers";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import supabase from "../config/supabase";
 
 const Payment = () => {
   const [loader, setLoader] = useState(false);
+  const [success, setSuccess] = useState(true);
+  const [productData, setProductData] = useState("");
+  const [userAddress, setUserAddress] = useState("");
+  const [balanceError, setBalanceError] = useState("");
+  const params = useParams();
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchUserAddr = async () => {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+      const { data, error } = await supabase
+        .from("Users") // Name of Table
+        .select()
+        .eq("account", address);
+
+      if (error) {
+        console.log(error);
+      }
+      if (data) {
+        setUserAddress(data[0].address);
+      }
+    };
+    fetchUserAddr();
+  }, []);
+
+  useEffect(() => {
+    const fetchProductData = async () => {
+      const { data, error } = await supabase
+        .from("Products") // Name of Table
+        .select()
+        .eq("pid", params.id);
+
+      if (error) {
+        console.log(error);
+      }
+      if (data) {
+        console.log(data[0]);
+        setProductData(data[0]);
+      }
+    };
+    fetchProductData();
+  }, []);
+  // 1836;
   const payNow = async () => {
-    setLoader(true);
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      CONTRACT_ABI,
-      signer
-    );
-    const tx = await contract.placeOrder(2, 1, {
-      value: ethers.utils.parseEther("0.0005"),
-    });
-    const receipt = await tx.wait();
-    console.log(Number(receipt.logs[0].topics[1]));
-    setLoader(false);
+    const balance = ethers.utils.formatEther(await signer.getBalance());
+
+    if (balance > productData.price / 1836) {
+      setLoader(true);
+      const contract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        CONTRACT_ABI,
+        signer
+      );
+      const tx = await contract.placeOrder(1, 1, {
+        value: ethers.utils.parseEther("0.000599"),
+      });
+      const receipt = await tx.wait();
+      console.log(Number(receipt.logs[0].topics[1]));
+      setLoader(false);
+    } else {
+      setBalanceError(true);
+      setTimeout(() => {
+        setBalanceError(false);
+      }, 3000);
+    }
   };
   return (
     <div>
+      {success && (
+        <div
+          className="fixed w-screen h-[100%] bg-slate-500 flex justify-center items-center -z-1"
+          style={{ background: "rgba(0, 0, 0, 0.27)" }}
+        >
+          <div className="z-1000 w-[450px] text-center  bg-[#ffffff] rounded-xl py-10 px-10 flex flex-col justify-center items-center gap-5">
+            <div className="flex flex-col justify-center items-center">
+              <h2 className=" text-[1.5rem] mb-2">Payment Successful</h2>
+              <p className="font-medium w-[70%] ">
+                Your order successfully Placed
+              </p>
+            </div>
+            <img
+              src={require("../assets/success.png")}
+              className="h-32 mb-2"
+            ></img>
+            <div>
+              <button
+                // onClick={() => userPetitionSign()}
+                className="bg-primaryColor text-[#ffffff] text-white py-2 px-6 w-52 rounded-[5px] text-[1.1rem] hover:bg-[#1F9B7E]"
+              >
+                Track your Order
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {loader && (
         <div
           className="fixed w-screen h-screen bg-slate-500 flex justify-center items-center"
@@ -77,34 +160,34 @@ const Payment = () => {
             <textarea
               className="bg-[#F3F9FB] w-full h-32 p-5 rounded-md"
               placeholder="Address here..."
+              value={userAddress}
+              onChange={(e) => setUserAddress(e.target.value)}
             ></textarea>
           </div>
           <div className="w-[100%] flex gap-6 rounded-xl border-[#B9B9B9] border-[1px] py-5 px-10">
             <div className="min-w-[250px] h-[250px] flex justify-center items-center bg-[#F5F5F5] rounded-2xl">
               <img
-                src={require("../assets/mobile.png")}
+                src={`${
+                  productData
+                    ? productData.purl
+                    : "https://cdn.questionpro.com/userimages/site_media/no-image.png"
+                }`}
                 className="h-[100%]"
               ></img>
             </div>
             <div className="w-[100%] flex flex-col gap-2">
-              <h1 className="text-[1.2rem]">Galaxy M53 (4GB | 64 GB )</h1>
-              <h2 className="text-[1.7rem] font-semibold">₹31999</h2>
-
-              <ul className="font-light list-disc ml-4 flex flex-col gap-1 text-[0.8rem]">
-                <li>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </li>
-                <li>
-                  Donec augue tellus, placerat nec sem eget, consequat malesuada
-                  mauris. Mauris hendrerit sed sapien vitae tincidunt. Praesent
-                  volutpat, erat vel faucibus tristique
-                </li>
-                <li>Fusce cursus eu sapien et luctus.</li>
-                <li>
-                  magna sem luctus ante, a mollis velit sem eu nunc. Aliquam nec
-                  pharetra leo.
-                </li>
-              </ul>
+              <h1 className="text-[1.2rem]">
+                {productData ? productData.name : "name"}
+              </h1>
+              <h2 className="text-[1.7rem] font-semibold">
+                ${productData ? productData.price : "price"}
+              </h2>
+              <p className="text-[0.8rem] font-light">
+                {productData ? productData.description : "description"}
+              </p>
+              <p className="text-[#249B3E] font-medium">
+                CO2 Footprint : {productData ? productData.cfootprint : "10"}g
+              </p>
             </div>
           </div>
         </div>
@@ -114,21 +197,35 @@ const Payment = () => {
             <div className="flex flex-col gap-5 mt-7">
               <div className="flex justify-between">
                 <p>Shipping</p>
-                <p className="font-medium">$1000</p>
+                <p className="font-medium">
+                  ${productData ? productData.price : "price"}
+                </p>
               </div>
               <div className="flex justify-between">
                 <p>Tax</p>
-                <p className="font-medium">$10</p>
+                <p className="font-medium">
+                  $
+                  {productData
+                    ? (productData.price * 0.01).toFixed(2)
+                    : "price"}
+                </p>
               </div>
               <div className="h-[2px] w-full bg-[#000000]"></div>
               <div className="flex justify-between">
                 <p>Total</p>
-                <p className="font-medium">$1010</p>
+                <p className="font-medium">
+                  $
+                  {productData
+                    ? (productData.price + productData.price * 0.01).toFixed(2)
+                    : "price"}
+                </p>
               </div>
             </div>
           </div>
           <p className="text-[#E51F1F] mt-3 mb-1 text-center">
-            Please provide valid address.
+            {balanceError
+              ? "Insufficient Balance!"
+              : "Please provide valid address."}
           </p>
           <div
             onClick={() => payNow()}

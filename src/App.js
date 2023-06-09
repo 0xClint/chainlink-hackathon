@@ -20,9 +20,9 @@ function App() {
           <Route path="/" exact element={<Home />} />
           <Route path="/category" exact element={<Category />} />
           <Route path="/result/:id" exact element={<ProductResult />} />
-          <Route path="/product" exact element={<Product />} />
-          <Route path="/payment" exact element={<Payment />} />
-          <Route path="/success" exact element={<Success />} />
+          <Route path="/product/:id" exact element={<Product />} />
+          <Route path="/payment/:id" exact element={<Payment />} />
+          <Route path="/success/:id" exact element={<Success />} />
           <Route path="/seller/dashboard" exact element={<Dashboard />} />
           <Route path="/delivery" exact element={<Deliver />} />
           <Route path="/create/user" exact element={<CreateUser />} />

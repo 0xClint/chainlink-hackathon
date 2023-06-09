@@ -1,11 +1,14 @@
 import React from "react";
 import { CartIcon, SearchIcon, UserIcon } from "../assets";
 import ConnectWallet from "./ConnectWallet";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
     <div className="flex items-center justify-between px-[5%] h-20 border-[#C8C8C8] border-b-2">
-      <div className="font-bold text-[2rem] text-[#666666]">ZKART</div>
+      <Link to="/">
+        <div className="font-bold text-[2rem] text-[#666666]">ZKART</div>
+      </Link>
       <div className="flex items-center gap-10">
         <div className="flex justify-start items-center bg-[#F3F9FB] w-[700px] rounded-md px-2">
           <SearchIcon className="h-5 w-7" />

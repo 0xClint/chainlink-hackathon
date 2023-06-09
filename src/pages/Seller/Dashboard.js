@@ -20,7 +20,7 @@ const Dashboard = () => {
         //   `Users (name,address),Products (name,price,category,description,cfootprint,purl,seller)`
         // )
         .select(`*,Products (Sellers(*))`)
-        .eq("user", "0x562f28a7F5B904a6523FF705881Cb8c60aa794CB");
+        .eq("user", "0xe468c2035adD65e1Feafeb6Ba4695990f7AB8F17");
 
       if (error) {
         // setFetchError("Could not fetch Users");

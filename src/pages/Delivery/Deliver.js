@@ -4,6 +4,7 @@ import { ethers } from "ethers";
 import Lottie from "react-lottie-player";
 import loaderGif from "../../assets/loader.json";
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../../contract/constant";
+var converter = require("hex2dec");
 
 const Deliver = () => {
   const [loader, setLoader] = useState(false);
@@ -19,7 +20,7 @@ const Deliver = () => {
       CONTRACT_ABI,
       signer
     );
-    const tx = await contract.deleveryReached(6);
+    const tx = await contract.deleveryReached(1);
     const receipt = await tx.wait();
     console.log(receipt);
     setLoader(false);
@@ -36,7 +37,12 @@ const Deliver = () => {
       CONTRACT_ABI,
       signer
     );
-    const tx = await contract.deliveryComplete();
+    const tx = await contract.deliveryComplete(
+      1,
+      converter.hexToDec(
+        "0x00000000000000000000000000000000000000000000000000000000000202ae"
+      )
+    );
     const receipt = await tx.wait();
     console.log(receipt);
     setLoader(false);
