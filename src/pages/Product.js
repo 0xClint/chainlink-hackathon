@@ -55,7 +55,7 @@ const Product = () => {
         </ul>
         <div className=" h-[2px] bg-primaryColor mt-8 mx-[5%]"></div>
       </div>
-      <div className="productDetail my-10 mx-[10%] flex gap-10">
+      <div className="productDetail my-10 mx-[10%] flex gap-10 rounded-xl border-[#B9B9B9] border-[1px] py-5 px-8">
         <div className="min-w-[400px] h-[400px] flex justify-center items-center bg-[#F5F5F5] rounded-2xl">
           <img
             src={`${
@@ -70,15 +70,12 @@ const Product = () => {
           <h1 className="text-[2rem]">
             {productData ? productData.name : "name"}
           </h1>
-          <div className="flex items-center gap-3">
-            <h2 className="text-[2.5rem] font-semibold">
-              ${productData ? productData.price : "price"}
-            </h2>
-            <div className="h-10 w-[1px] bg-[#000000]"></div>
-            <p className="text-[#249B3E] font-semibold text-[1.5rem]">
-              CO2 Footprint : {productData ? productData.cfootprint : "cfp"}g
-            </p>
-          </div>
+          <h2 className="text-[2.5rem] font-semibold">
+            ${productData ? productData.price : "price"}
+          </h2>
+          <p className="text-[#249B3E] font-semibold text-[1.5rem]">
+            CO2 Footprint : {productData ? productData.cfootprint : "cfp"}g
+          </p>
           <div>
             <h3 className="font-medium text-[1.1rem] mb-1">About this item</h3>
             <p>{productData ? productData.description : "name"}</p>

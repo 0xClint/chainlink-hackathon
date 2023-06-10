@@ -49,7 +49,7 @@ const Payment = () => {
         console.log(error);
       }
       if (data) {
-        // console.log(data[0]);
+        console.log(data);
         setProductData(data[0]);
       }
     };
@@ -71,6 +71,7 @@ const Payment = () => {
       return 0;
     }
   };
+  console.log(productData);
   const payNow = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
@@ -85,8 +86,8 @@ const Payment = () => {
         CONTRACT_ABI,
         signer
       );
-      const tx = await contract.placeOrder(1, 1, {
-        value: ethers.utils.parseEther("0.000599"),
+      const tx = await contract.placeOrder(productData.pid, 1, {
+        value: ethers.utils.parseEther(`${productData.price / 1000000}`),
       });
       const receipt = await tx.wait();
       let orderId = Number(receipt.logs[0].topics[1]);
@@ -94,6 +95,7 @@ const Payment = () => {
 
       await saveOrder(orderId, params.id, account);
       setLoader(false);
+      setSuccess(true);
     } else {
       setBalanceError(true);
       setTimeout(() => {
@@ -120,7 +122,7 @@ const Payment = () => {
               className="h-32 mb-2"
             ></img>
             <div>
-              <Link to="/success/1">
+              <Link to={`/success/${params.id}`}>
                 <button
                   // onClick={() => userPetitionSign()}
                   className="bg-primaryColor text-[#ffffff] text-white py-2 px-6 w-52 rounded-[5px] text-[1.1rem] hover:bg-[#007AAF]"

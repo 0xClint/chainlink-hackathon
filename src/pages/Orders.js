@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Footer, Header } from "../components";
 import supabase from "../config/supabase";
 import { ethers } from "ethers";
+import { Link } from "react-router-dom";
 
 const Orders = () => {
   const [productData, setProductData] = useState();
+  const [isSeller, setisSeller] = useState("");
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchOrder = async () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
@@ -32,7 +34,30 @@ const Orders = () => {
         setProductData(data);
       }
     };
-    fetchUsers();
+    fetchOrder();
+  }, []);
+
+  useEffect(() => {
+    const fetchSeller = async () => {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+
+      const { data, error } = await supabase
+        .from("Sellers") // Name of Table
+        .select()
+        .eq("account", address);
+
+      if (error) {
+        console.log(error);
+      }
+      if (data) {
+        console.log(data);
+        setisSeller(data && data[0] ? true : false);
+      }
+    };
+    fetchSeller();
   }, []);
   console.log(productData);
   return (
@@ -62,10 +87,26 @@ const Orders = () => {
             Toys & Luggage
           </li>
         </ul>
-        <div className="headingContent mx-[5%]">
-          <p className="text-[#666666] font-semibold text-[1.5rem]">
-            My Orders
-          </p>
+        <div className="headingContent mx-[5%] mt-5">
+          <div className="w-[100%] flex justify-between items-center">
+            <p className="text-[#666666] font-semibold text-[1.5rem]">
+              My Orders
+            </p>
+            {isSeller && (
+              <div className="flex gap-3">
+                <Link to={`/seller/dashboard`}>
+                  <button className="text-[1.3rem] font-medium cursor-pointer text-center text-primaryColor py-2 px-4 rounded-lg  hover:text-[#007AAF] border-[3px] border-primaryColor">
+                    Orders to be deliver
+                  </button>
+                </Link>
+                <Link to={`/create/product`} className="h-[100%]">
+                  <button className="text-[1.3rem] font-medium cursor-pointer text-[#ffffff] text-center bg-primaryColor py-2 px-4 rounded-lg  hover:bg-[#007AAF] hover:border-[#007AAF] border-[3px] border-primaryColor">
+                    Create Order +
+                  </button>
+                </Link>
+              </div>
+            )}
+          </div>
           <div className="w-full h-[2px] bg-primaryColor mt-2"></div>
         </div>
       </div>
@@ -74,7 +115,10 @@ const Orders = () => {
           ? productData.map((item) => {
               // console.log(item);
               return (
-                <div className="w-[100%] flex gap-6 rounded-xl border-[#B9B9B9] border-[1px] py-5 px-10">
+                <div
+                  className="w-[100%] flex gap-6 rounded-xl border-[#B9B9B9] border-[1px] py-5 px-10"
+                  key={item.id}
+                >
                   <div className="min-w-[200px] h-[200px] flex justify-center items-center bg-[#F5F5F5] rounded-2xl">
                     <img
                       src={`${
@@ -85,7 +129,7 @@ const Orders = () => {
                       className="h-[100%]"
                     ></img>
                   </div>
-                  <div className="w-[100%] flex gap-2">
+                  <div className="w-[100%] flex gap-2 justify-center items-center">
                     <div className="w-[550px]">
                       <h1 className="text-[1.2rem]">
                         {item.Products ? item.Products.name : "name"}
@@ -103,27 +147,31 @@ const Orders = () => {
                           : "description"}
                       </p>
                     </div>
-                    <div className=" flex  flex-col gap-5 h-[100%]">
-                      <div className="flex flex-col gap-5 items-start justify-start">
-                        <p>
-                          Category :{" "}
-                          {item.Products ? item.Products.category : "Category"}
-                        </p>
-                        <p>
-                          Product ID :{" "}
-                          {item.Products ? item.Products.pid : "pid"}
-                        </p>
-                        <p>
-                          Quantity :{" "}
-                          {item.quantity ? item.quantity : "quantity"}
-                        </p>
-                      </div>
+
+                    <div className="flex flex-col gap-5 items-start justify-start">
+                      <p>
+                        Category :{" "}
+                        {item.Products ? item.Products.category : "Category"}
+                      </p>
+                      <p>
+                        Product ID : {item.Products ? item.Products.pid : "pid"}
+                      </p>
+                      <p>
+                        Quantity : {item.quantity ? item.quantity : "quantity"}
+                      </p>
                     </div>
                   </div>
                 </div>
               );
             })
-          : "a"}
+          : ""}
+        {productData && productData.length == 0 ? (
+          <div className="text-center text-[2rem] font-medium">
+            No Orders Yet
+          </div>
+        ) : (
+          ""
+        )}
       </div>
       <Footer />
     </div>

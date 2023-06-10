@@ -37,6 +37,7 @@ const Home = () => {
         console.log(error);
       }
       if (data) {
+        console.log(data);
         await setElectronics(
           await data.filter((item) => item["category"] == "Electronics")
         );

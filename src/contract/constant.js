@@ -1,5 +1,114 @@
-export const CONTRACT_ADDRESS = "0x30785b38D429279fFeA191aAaa31b9B9cF255960";
+export const CONTRACT_ADDRESS = "0xdA5e6D35FFE92DF864cC11e60F33781799E0FA08";
 export const CONTRACT_ABI = [
+  {
+    inputs: [],
+    name: "acceptOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_pid",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_sid",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_price",
+        type: "uint256",
+      },
+    ],
+    name: "addProduct",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_orderId",
+        type: "uint256",
+      },
+    ],
+    name: "deleveryReached",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_orderId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_otp",
+        type: "uint256",
+      },
+    ],
+    name: "deliveryComplete",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_orderId",
+        type: "uint256",
+      },
+    ],
+    name: "generateOTP",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_reqId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_orderId",
+        type: "uint256",
+      },
+    ],
+    name: "getMyOTP",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
   {
     inputs: [
       {
@@ -69,6 +178,48 @@ export const CONTRACT_ABI = [
     ],
     name: "OwnershipTransferred",
     type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_pid",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_quantity",
+        type: "uint256",
+      },
+    ],
+    name: "placeOrder",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "requestId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256[]",
+        name: "randomWords",
+        type: "uint256[]",
+      },
+    ],
+    name: "rawFulfillRandomWords",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     anonymous: false,
@@ -173,129 +324,15 @@ export const CONTRACT_ABI = [
     type: "event",
   },
   {
-    inputs: [],
-    name: "acceptOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_pid",
-        type: "uint256",
-      },
-      {
         internalType: "address",
-        name: "_sid",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "_price",
-        type: "uint256",
-      },
-    ],
-    name: "addProduct",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_orderId",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "_deleveryAgent",
+        name: "to",
         type: "address",
       },
     ],
-    name: "assignDeliverAgent",
+    name: "transferOwnership",
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_orderId",
-        type: "uint256",
-      },
-    ],
-    name: "deleveryReached",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_orderId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_otp",
-        type: "uint256",
-      },
-    ],
-    name: "deliveryComplete",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_orderId",
-        type: "uint256",
-      },
-    ],
-    name: "generateOTP",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_reqId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_orderId",
-        type: "uint256",
-      },
-    ],
-    name: "getMyOTP",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -341,11 +378,6 @@ export const CONTRACT_ABI = [
         internalType: "bool",
         name: "reached",
         type: "bool",
-      },
-      {
-        internalType: "address",
-        name: "deleveryAgent",
-        type: "address",
       },
       {
         internalType: "bool",
@@ -435,48 +467,6 @@ export const CONTRACT_ABI = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_pid",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_quantity",
-        type: "uint256",
-      },
-    ],
-    name: "placeOrder",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "requestId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256[]",
-        name: "randomWords",
-        type: "uint256[]",
-      },
-    ],
-    name: "rawFulfillRandomWords",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
         name: "",
         type: "uint256",
       },
@@ -514,19 +504,6 @@ export const CONTRACT_ABI = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-    ],
-    name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
 ];

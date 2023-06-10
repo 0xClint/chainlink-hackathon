@@ -1,8 +1,54 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowRight, PriceIcon } from "../assets";
 import { Header, ProductCard, Footer } from "../components";
+import { Link, useParams } from "react-router-dom";
+import supabase from "../config/supabase";
 
 const ProductResult = () => {
+  const params = useParams();
+  const [productData, setProductData] = useState("");
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const { data, error } = await supabase
+        .from("Products") // Name of Table
+        .select();
+
+      if (error) {
+        console.log(error);
+      }
+      if (data) {
+        console.log(data);
+        // if (data && data[0]) {
+        // setProductData(
+        // await searchProducts(await params.id.replace(/-/g, " "))
+        // );
+        // }
+        let search = await params.id.replace(/-/g, " ");
+        console.log(await searchProducts(search));
+      }
+    };
+    fetchProducts();
+  }, []);
+  console.log(productData);
+  function searchProducts(searchTerm) {
+    // Convert the search term to lowercase for case-insensitive search
+    const term = searchTerm.toLowerCase();
+
+    // Use the filter method to find matching products
+    if (productData) {
+      const results = productData.filter((product) => {
+        const categoryMatch = product.category.toLowerCase().includes(term);
+        const nameMatch = product.name.toLowerCase().includes(term);
+        const descriptionMatch = product.description
+          .toLowerCase()
+          .includes(term);
+
+        return categoryMatch || nameMatch || descriptionMatch;
+      });
+      return results;
+    }
+  }
   return (
     <div>
       <Header />
@@ -73,25 +119,25 @@ const ProductResult = () => {
                 <div className="flex flex-col gap-1 ml-2 mt-2">
                   <div className="flex items-center gap-2 cursor-pointer hover:text-primaryColor">
                     <input type="checkbox" id="rating1"></input>
-                    <label for="rating1" className="cursor-pointer">
+                    <label htmlFor="rating1" className="cursor-pointer">
                       4★ & above
                     </label>
                   </div>
                   <div className="flex items-center gap-2 cursor-pointer hover:text-primaryColor">
                     <input type="checkbox" id="rating2"></input>
-                    <label for="rating2" className="cursor-pointer">
+                    <label htmlFor="rating2" className="cursor-pointer">
                       3★ & above
                     </label>
                   </div>
                   <div className="flex items-center gap-2 cursor-pointer hover:text-primaryColor">
                     <input type="checkbox" id="rating3"></input>
-                    <label for="rating3" className="cursor-pointer">
+                    <label htmlFor="rating3" className="cursor-pointer">
                       2★ & above
                     </label>
                   </div>
                   <div className="flex items-center gap-2 cursor-pointer hover:text-primaryColor">
                     <input type="checkbox" id="rating4"></input>
-                    <label for="rating4" className="cursor-pointer">
+                    <label htmlFor="rating4" className="cursor-pointer">
                       1★ & above
                     </label>
                   </div>
@@ -100,11 +146,11 @@ const ProductResult = () => {
             </div>
           </div>
           <div className="productContainer flex flex-wrap gap-5">
+            {/* <ProductCard />
             <ProductCard />
             <ProductCard />
             <ProductCard />
-            <ProductCard />
-            <ProductCard />
+            <ProductCard /> */}
           </div>
         </div>
       </div>

@@ -13,15 +13,20 @@ struct Order {
     uint quantity;
     address customer;
     bool reached;
-    address deleveryAgent;
+    // address deleveryAgent;
     bool delivered;
-    uint otp;
+    bytes32 otpHash;
 }
 
 contract Delivery is VRFConsumerBaseV2, ConfirmedOwner {
-    mapping(uint256 => string) public pidToPname; //product Id to product name
+    event orderPlaced(uint indexed orderId);
+    event otpRequested(uint indexed reqId);
+    event otpGenerated(uint indexed otp);
+    event productAdded(uint pid, address sid, uint prize);
+
+    // mapping(uint256 => string) public pidToPname; //product Id to product name
     mapping(uint256 => address) public pidToSid; //product Id to seller's id
-    mapping(uint256 => uint256) public pidToCarbon; //product Id to carbon footprint of the product
+    // mapping(uint256 => uint256) public pidToCarbon; //product Id to carbon footprint of the product
     mapping(uint256 => uint256) public pidToPrice; //product Id to price of the product
     mapping(uint => Order) public orderDetails;
     uint counter = 1;
@@ -51,7 +56,7 @@ contract Delivery is VRFConsumerBaseV2, ConfirmedOwner {
     // For a list of available gas lanes on each network,
     // see https://docs.chain.link/docs/vrf/v2/subscription/supported-networks/#configurations
     bytes32 keyHash =
-        0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f;
+        0x79d3d8832d904592c0bf9818b621522c988bb8b0c05cdc3b15aea1b6e8db0c15;
 
     // Depends on the number of requested values that you want sent to the
     // fulfillRandomWords() function. Storing each word costs about 20,000 gas,
@@ -70,48 +75,47 @@ contract Delivery is VRFConsumerBaseV2, ConfirmedOwner {
 
     constructor(
         uint64 subscriptionId,
-        address seller1,
-        address seller2
+        address seller1
     )
-        VRFConsumerBaseV2(0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed)
+        VRFConsumerBaseV2(0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D)
         ConfirmedOwner(msg.sender)
     {
         COORDINATOR = VRFCoordinatorV2Interface(
-            0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed
+            0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D
         );
         s_subscriptionId = subscriptionId;
 
-        pidToPname[79] = "CryptoBeast ASIC Miner";
-        pidToPname[170] = "MegaHash Pro GPU Rig";
-        pidToPname[364400] = "PowerMine 2000W Power Supply";
-        pidToPname[277316] = "BlockMaster Cooling Solution";
-        pidToPname[500000] = "HashForce Mining Motherboard";
+        pidToSid[1] = seller1;
+        pidToSid[2] = seller1;
+        pidToSid[3] = seller1;
+        pidToSid[4] = seller1;
+        pidToSid[5] = seller1;
+        pidToSid[6] = seller1;
 
-        pidToSid[79] = seller1;
-        pidToSid[170] = seller1;
-        pidToSid[364400] = seller2;
-        pidToSid[277316] = seller2;
-        pidToSid[500000] = seller2;
+        pidToPrice[1] = 599000000000000;
+        pidToPrice[2] = 1000000000000;
+        pidToPrice[3] = 1000000000000;
+        pidToPrice[4] = 15000000000000;
+        pidToPrice[5] = 2599000000000000;
+        pidToPrice[6] = 149000000000000;
+    }
 
-        pidToCarbon[79] = 170;
-        pidToCarbon[170] = 220;
-        pidToCarbon[364400] = 250; //should get from an oracle
-        pidToCarbon[277316] = 90;
-        pidToCarbon[500000] = 270;
+    modifier onlyAdmin() {
+        _;
+    }
 
-        pidToPrice[79] = 1000000000000000;
-        pidToPrice[170] = 500000000000000;
-        pidToPrice[364400] = 600000000000000;
-        pidToPrice[277316] = 700000000000000;
-        pidToPrice[500000] = 400000000000000;
+    function addProduct(
+        uint _pid,
+        address _sid,
+        uint _price
+    ) external onlyAdmin {
+        pidToPrice[_pid] = _price;
+        pidToSid[_pid] = _sid;
+        emit productAdded(_pid, _sid, _price);
     }
 
     // Assumes the subscription is funded sufficiently.
-    function requestRandomWords()
-        internal
-        onlyOwner
-        returns (uint256 requestId)
-    {
+    function requestRandomWords() internal returns (uint256 requestId) {
         // Will revert if subscription is not set and funded.
         requestId = COORDINATOR.requestRandomWords(
             keyHash,
@@ -153,8 +157,8 @@ contract Delivery is VRFConsumerBaseV2, ConfirmedOwner {
         uint256 _pid,
         uint256 _quantity
     ) public payable returns (uint) {
-        uint256 tax = pidToCarbon[_pid]; /*(Some Calculations)*/
-        uint256 totalPrice = (pidToPrice[_pid] + tax) * _quantity;
+        // uint256 tax = pidToCarbon[_pid]; /*(Some Calculations)*/
+        uint256 totalPrice = (pidToPrice[_pid]) * _quantity;
 
         require(
             msg.value == totalPrice,
@@ -173,23 +177,19 @@ contract Delivery is VRFConsumerBaseV2, ConfirmedOwner {
         order.delivered = false;
         orderDetails[orderId] = order;
 
+        emit orderPlaced(orderId);
+
         return orderId;
     }
 
-    function assignDeliverAgent(
-        uint _orderId,
-        address _deleveryAgent
-    ) external {
-        require(
-            msg.sender == pidToSid[orderDetails[_orderId].pid],
-            "Not Authorized Seller for the order!"
-        );
-        orderDetails[_orderId].deleveryAgent = _deleveryAgent;
-    }
+    // function assignDeliverAgent(uint _orderId, address _deleveryAgent) external{
+    //     require(msg.sender == pidToSid[orderDetails[_orderId].pid], "Not Authorized Seller for the order!");
+    //     orderDetails[_orderId].deleveryAgent = _deleveryAgent;
+    // }
 
     function deleveryReached(uint _orderId) external {
         require(
-            msg.sender == orderDetails[_orderId].deleveryAgent,
+            msg.sender == pidToSid[orderDetails[_orderId].pid],
             "Not Authorized Delevery Agrnt for the order"
         );
         orderDetails[_orderId].reached = true;
@@ -205,6 +205,7 @@ contract Delivery is VRFConsumerBaseV2, ConfirmedOwner {
             "This it not your order, Please put you order ID"
         );
         uint reqId = requestRandomWords();
+        emit otpRequested(reqId);
         return reqId;
     }
 
@@ -224,17 +225,20 @@ contract Delivery is VRFConsumerBaseV2, ConfirmedOwner {
         uint256[] memory randomWords;
         (fulfilled, randomWords) = getRequestStatus(_reqId);
         uint otp = randomWords[0] % 1000000;
-        orderDetails[_orderId].otp = otp;
+        bytes32 hash = keccak256(abi.encodePacked(otp));
+        orderDetails[_orderId].otpHash = hash;
+        emit otpGenerated(otp);
         return (fulfilled, otp);
     }
 
     function deliveryComplete(uint _orderId, uint _otp) external {
         require(
-            msg.sender == orderDetails[_orderId].deleveryAgent,
+            msg.sender == pidToSid[orderDetails[_orderId].pid],
             "Not Authorized Delevery Agrnt for the order"
         );
+        bytes32 otpHash = keccak256(abi.encodePacked(_otp));
         require(
-            _otp == orderDetails[_orderId].otp,
+            otpHash == orderDetails[_orderId].otpHash,
             "Invalid OTP! Please try again"
         );
         orderDetails[_orderId].delivered = true;

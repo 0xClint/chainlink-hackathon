@@ -7,6 +7,7 @@ import {
   Success,
   CreateUser,
   Orders,
+  CreateProduct,
 } from "./pages";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Seller/Dashboard";
@@ -24,8 +25,9 @@ function App() {
           <Route path="/payment/:id" exact element={<Payment />} />
           <Route path="/success/:id" exact element={<Success />} />
           <Route path="/seller/dashboard" exact element={<Dashboard />} />
-          <Route path="/delivery" exact element={<Deliver />} />
+          <Route path="/delivery/:id" exact element={<Deliver />} />
           <Route path="/create/user" exact element={<CreateUser />} />
+          <Route path="/create/product" exact element={<CreateProduct />} />
           <Route path="/orders" exact element={<Orders />} />
         </Routes>
       </Router>

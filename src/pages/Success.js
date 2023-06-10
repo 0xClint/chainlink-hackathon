@@ -1,18 +1,65 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Footer, Header } from "../components";
 import Lottie from "react-lottie-player";
 import loaderGif from "../assets/loader.json";
+import { Link, useParams } from "react-router-dom";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../contract/constant";
 import { ethers } from "ethers";
+import supabase from "../config/supabase";
 var converter = require("hex2dec");
 
 const Success = () => {
   const [OTP, setOTP] = useState(false);
-  // const [OTP, setOTP] = useState(true);
+  const [pAddress, setpAddress] = useState("");
+  const [productData, setProductData] = useState("");
   const [loader, setLoader] = useState(false);
+  const params = useParams();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const { data, error } = await supabase
+        .from("Products") // Name of Table
+        .select(`*,Orders(*)`)
+        .eq("pid", params.id);
+
+      if (error) {
+        console.log(error);
+      }
+      if (data) {
+        // console.log(data[0]);
+        setProductData(data[0]);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    const setAddress = async () => {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = await provider.getSigner();
+      const account = await signer.getAddress();
+
+      const { data, error } = await supabase
+        .from("Users") // Name of Table
+        .select()
+        .eq("account", account);
+
+      if (error) {
+        console.log(error);
+      }
+      if (data) {
+        // console.log(data);
+        setpAddress(data[0].address);
+        // setProductData(data[0]);
+      }
+    };
+    setAddress();
+  }, []);
+  console.log(productData);
 
   const getOTP = async () => {
-    // setLoader(true);
+    setLoader(true);
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
@@ -21,14 +68,20 @@ const Success = () => {
       CONTRACT_ABI,
       signer
     );
-    const tx1 = await contract.generateOTP(3);
+    console.log(productData.Orders[0].id);
+    const tx1 = await contract.generateOTP(productData.Orders[0].id);
     const receipt1 = await tx1.wait();
-    console.log(receipt1);
-    // console.log(Number(receipt1.logs[0].topics[1]));
-    // setLoader(false);
-    // const tx2 = await contract.getMyOTP(2);
-    // const receipt2 = await tx2.wait();
-    // console.log(receipt2);
+    let reqID = await converter.hexToDec(receipt1.events[2].topics[1]);
+    console.log(reqID, typeof reqID);
+
+    // setTimeout(async () => {
+    //   console.log("2nd Contract run");
+    //   const tx2 = await contract.getMyOTP(reqID, productData.Orders[0].id);
+    //   const receipt2 = await tx2.wait();
+    //   console.log(receipt2);
+    // }, 15000);
+
+    setLoader(false);
   };
 
   const tempOTP = async () => {
@@ -43,13 +96,15 @@ const Success = () => {
     );
 
     const tx1 = await contract.getMyOTP(
-      converter.hexToDec(
-        "0x38c676bd41934585a727741782833deaee0ae76ffb49cdc5a23ac26dba9f11b5"
-      ),
+      // converter.hexToDec(
+      //   "0x38c676bd41934585a727741782833deaee0ae76ffb49cdc5a23ac26dba9f11b5"
+      // ),
+      "32932750712193573740129442489268691016150639593294479398439624409457058254155",
       3
     );
     const receipt1 = await tx1.wait();
     console.log(receipt1);
+    setLoader(false);
   };
 
   return (
@@ -112,27 +167,31 @@ const Success = () => {
         <div className="w-[100%] flex gap-6 rounded-xl border-[#B9B9B9] border-[1px] py-5 px-10">
           <div className="min-w-[250px] h-[250px] flex justify-center items-center bg-[#F5F5F5] rounded-2xl">
             <img
-              src={require("../assets/mobile.png")}
+              src={`${
+                productData
+                  ? productData.purl
+                  : "https://cdn.questionpro.com/userimages/site_media/no-image.png"
+              }`}
               className="h-[100%]"
             ></img>
           </div>
           <div className="w-[100%] flex flex-col gap-2">
-            <h1 className="text-[1.2rem]">Galaxy M53 (4GB | 64 GB )</h1>
-            <h2 className="text-[1.7rem] font-semibold">₹31999</h2>
-
-            <ul className="font-light list-disc ml-4 flex flex-col gap-1 text-[0.8rem]">
-              <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-              <li>
-                Donec augue tellus, placerat nec sem eget, consequat malesuada
-                mauris. Mauris hendrerit sed sapien vitae tincidunt. Praesent
-                volutpat, erat vel faucibus tristique
-              </li>
-              <li>Fusce cursus eu sapien et luctus.</li>
-              <li>
-                magna sem luctus ante, a mollis velit sem eu nunc. Aliquam nec
-                pharetra leo.
-              </li>
-            </ul>
+            <h1 className="text-[1.2rem]">
+              {productData ? productData.name : "name"}
+            </h1>
+            <h2 className="text-[1.7rem] font-semibold">
+              ${productData ? productData.price : "price"}
+            </h2>
+            <p className="text-[#249B3E] font-semibold text-[1.5rem]">
+              CO2 Footprint : {productData ? productData.cfootprint : "cfp"}g
+            </p>
+            <div>
+              <h3 className="font-medium text-[1.1rem] mb-1">
+                About this item
+              </h3>
+              <p>{productData ? productData.description : "name"}</p>
+            </div>
+            <p>Deliver at :{pAddress ? pAddress : "Address"}</p>
           </div>
         </div>
         <div className="max-w-[300px] rounded-xl border-[#B9B9B9] border-[1px] py-5 px-6">

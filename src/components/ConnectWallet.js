@@ -2,8 +2,14 @@ import React, { useEffect } from "react";
 import { useMoralis } from "react-moralis";
 import { CartIcon, UserIcon } from "../assets";
 import { Link } from "react-router-dom";
+import { ethers } from "ethers";
+import supabase from "../config/supabase";
+import { useState } from "react";
 
 const ConnectWallet = () => {
+  const [name, setName] = useState("");
+  const [isSeller, setisSeller] = useState("");
+
   const {
     enableWeb3,
     isWeb3Enabled,
@@ -28,6 +34,7 @@ const ConnectWallet = () => {
     // Moralis
     Moralis.onAccountChanged((account) => {
       console.log(`Account changed to ${account}`);
+      window.location.reload();
       if (account == null) {
         window.localStorage.removeItem("connected");
         deactivateWeb3();
@@ -35,18 +42,76 @@ const ConnectWallet = () => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+
+      const { data, error } = await supabase
+        .from("Users") // Name of Table
+        .select()
+        .eq("account", address);
+
+      if (error) {
+        console.log(error);
+      }
+      if (data) {
+        // console.log(data);
+        setName(data && data[0] ? data[0].name : "");
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    const fetchSeller = async () => {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+
+      const { data, error } = await supabase
+        .from("Sellers") // Name of Table
+        .select()
+        .eq("account", address);
+
+      if (error) {
+        console.log(error);
+      }
+      if (data) {
+        console.log(data);
+        setisSeller(data && data[0] ? true : false);
+      }
+    };
+    fetchSeller();
+  }, []);
   return (
     <div>
       {account ? (
         // <Link to="/profile">
         <div className=" flex justify-center items-center font-semibold text-[#666666] gap-2 bg-white p-[6px]">
-          <div className="flex items-center gap-1 cursor-pointer">
-            <UserIcon className="h-8 w-8 " />
-            <p>
-              {account.slice(0, 7)}...
-              {account.slice(account.length - 4)}
-            </p>
-          </div>
+          <Link to="/create/user">
+            <div className="flex items-center gap-2 cursor-pointer">
+              <UserIcon className="h-8 w-8 " />
+              <div>
+                <div className="flex items-center gap-2">
+                  <p className="text-[1rem]">{name ? name : "guest"}</p>
+                  {isSeller && (
+                    <p className="text-[0.7rem] text-[#ffffff] bg-[#0074A7] rounded-md w-10 text-center h-4">
+                      Seller
+                    </p>
+                  )}
+                </div>
+                <p className="text-[0.8rem] font-normal">
+                  {account.slice(0, 7)}...
+                  {account.slice(account.length - 4)}
+                </p>
+              </div>
+            </div>
+          </Link>
           <div className="h-9 w-[2px] bg-[#D9D9D9] mx-3"></div>
           <Link to="/orders">
             <div className="flex items-center gap-1 cursor-pointer">
