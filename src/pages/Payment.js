@@ -9,9 +9,10 @@ import supabase from "../config/supabase";
 
 const Payment = () => {
   const [loader, setLoader] = useState(false);
-  const [success, setSuccess] = useState(true);
+
   const [productData, setProductData] = useState("");
   const [userAddress, setUserAddress] = useState("");
+  const [success, setSuccess] = useState(false);
   const [balanceError, setBalanceError] = useState("");
   const params = useParams();
   const navigate = useNavigate();
@@ -48,17 +49,33 @@ const Payment = () => {
         console.log(error);
       }
       if (data) {
-        console.log(data[0]);
+        // console.log(data[0]);
         setProductData(data[0]);
       }
     };
     fetchProductData();
   }, []);
   // 1836;
+
+  const saveOrder = async (orderID, pId, account) => {
+    const { data, error } = await supabase
+      .from("Orders")
+      .insert([{ id: orderID, pid: pId, user: account, quantity: 1 }]) // Name of Table
+      .select();
+
+    if (error) {
+      console.log(error);
+    }
+    if (data) {
+      console.log(data);
+      return 0;
+    }
+  };
   const payNow = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
+    const account = await signer.getAddress();
     const balance = ethers.utils.formatEther(await signer.getBalance());
 
     if (balance > productData.price / 1836) {
@@ -72,7 +89,10 @@ const Payment = () => {
         value: ethers.utils.parseEther("0.000599"),
       });
       const receipt = await tx.wait();
-      console.log(Number(receipt.logs[0].topics[1]));
+      let orderId = Number(receipt.logs[0].topics[1]);
+      console.log(orderId);
+
+      await saveOrder(orderId, params.id, account);
       setLoader(false);
     } else {
       setBalanceError(true);
@@ -88,7 +108,7 @@ const Payment = () => {
           className="fixed w-screen h-[100%] bg-slate-500 flex justify-center items-center -z-1"
           style={{ background: "rgba(0, 0, 0, 0.27)" }}
         >
-          <div className="z-1000 w-[450px] text-center  bg-[#ffffff] rounded-xl py-10 px-10 flex flex-col justify-center items-center gap-5">
+          <div className="z-1000 w-[400px] text-center  bg-[#ffffff] rounded-xl py-10 px-10 flex flex-col justify-center items-center gap-5">
             <div className="flex flex-col justify-center items-center">
               <h2 className=" text-[1.5rem] mb-2">Payment Successful</h2>
               <p className="font-medium w-[70%] ">
@@ -100,12 +120,14 @@ const Payment = () => {
               className="h-32 mb-2"
             ></img>
             <div>
-              <button
-                // onClick={() => userPetitionSign()}
-                className="bg-primaryColor text-[#ffffff] text-white py-2 px-6 w-52 rounded-[5px] text-[1.1rem] hover:bg-[#1F9B7E]"
-              >
-                Track your Order
-              </button>
+              <Link to="/success/1">
+                <button
+                  // onClick={() => userPetitionSign()}
+                  className="bg-primaryColor text-[#ffffff] text-white py-2 px-6 w-52 rounded-[5px] text-[1.1rem] hover:bg-[#007AAF]"
+                >
+                  Track your Order
+                </button>
+              </Link>
             </div>
           </div>
         </div>

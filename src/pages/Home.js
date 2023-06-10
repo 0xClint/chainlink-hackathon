@@ -9,6 +9,7 @@ import {
 import { ArrowRight } from "../assets";
 import { Link } from "react-router-dom";
 import supabase from "../config/supabase";
+import { ethers } from "ethers";
 
 const cardData = [
   { id: 1 },
@@ -22,6 +23,7 @@ const cardData = [
 const Home = () => {
   const [productData, setProductData] = useState();
   const [electronics, setElectronics] = useState();
+  const [isUser, setisUser] = useState(true);
   const [grocery, setGrocery] = useState();
 
   useEffect(() => {
@@ -35,7 +37,6 @@ const Home = () => {
         console.log(error);
       }
       if (data) {
-        console.log("data");
         await setElectronics(
           await data.filter((item) => item["category"] == "Electronics")
         );
@@ -47,9 +48,55 @@ const Home = () => {
     };
     fetchProducts();
   }, []);
-  console.log(productData);
+
+  const confirmUser = async (array) => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = await provider.getSigner();
+    const account = await signer.getAddress();
+
+    let userArray = array.filter(function (el) {
+      return el.account == account;
+    });
+    if (!userArray.length) {
+      setisUser(false);
+      console.log("No User");
+    }
+  };
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const { data, error } = await supabase
+        .from("Users") // Name of Table
+        .select();
+
+      if (error) {
+        console.log(error);
+      }
+      if (data) {
+        confirmUser(data);
+      }
+    };
+    fetchProducts();
+  }, []);
+  // console.log(productData);
   return (
     <div>
+      {!isUser && (
+        <div
+          className="fixed w-screen h-[100%] bg-slate-500 flex justify-center items-start -z-1"
+          style={{ background: "rgba(0, 0, 0, 0.27)" }}
+        >
+          <div className="z-1000 w-[100%] text-center  bg-[#ffffff] rounded-xl py-5 px-10 flex flex-col justify-center items-center gap-5">
+            <Link to="/create/user">
+              <button className="bg-primaryColor text-[#ffffff] text-white py-2 px-6 w-60 rounded-[5px] text-[1.1rem] hover:bg-[#007AAF]">
+                Please Create Account
+              </button>
+            </Link>
+          </div>
+        </div>
+      )}
+
       <Header />
       <div>
         <ul className="flex justify-center gap-3 font-medium text-[0.9rem] my-3">
@@ -75,7 +122,7 @@ const Home = () => {
             Toys & Luggage
           </li>
         </ul>
-        <Slider />
+        <Slider className="-z-10" />
         <div className="ElectronicSection mx-[5%] my-10">
           <div className="headingContent w-[100%]">
             <div className="flex justify-between">

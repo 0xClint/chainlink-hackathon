@@ -10,17 +10,13 @@ const Dashboard = () => {
   const [loader, setLoader] = useState(false);
   const [orderID, setOrderID] = useState("");
   const [address, setAddress] = useState("");
+  const [sellerData, setSellerData] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
       const { data, error } = await supabase
         .from("Orders") // Name of Table
-        // .select()
-        // .select(
-        //   `Users (name,address),Products (name,price,category,description,cfootprint,purl,seller)`
-        // )
-        .select(`*,Products (Sellers(*))`)
-        .eq("user", "0xe468c2035adD65e1Feafeb6Ba4695990f7AB8F17");
+        .select(`*,Users (name,address),Products (*,Sellers(*))`);
 
       if (error) {
         // setFetchError("Could not fetch Users");
@@ -29,37 +25,49 @@ const Dashboard = () => {
       }
       if (data) {
         // setTests(data);
-        console.log(data);
+        // console.log(data);
+        setSellerData(await filterSeller(data));
         // setFetchError(null);
       }
     };
     fetchUsers();
   }, []);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const { data, error } = await supabase
-        .from("Orders") // Name of Table
-        // .select()
-        // .select(
-        //   `Users (name,address),Products (name,price,category,description,cfootprint,purl,seller)`
-        // )
-        .select(`*,Products (*,Sellers(*)),Users(*)`)
-        .eq("user", "0x562f28a7F5B904a6523FF705881Cb8c60aa794CB");
+  const filterSeller = async (data) => {
+    let sellerData = data.filter((el) => {
+      return (
+        el.Products.Sellers.account ==
+        "0x74A964DCACBd962A3179120c9727F9F4F90112a6"
+      );
+    });
+    console.log(sellerData[0]);
+    return sellerData[0];
+  };
 
-      if (error) {
-        // setFetchError("Could not fetch Users");
-        // setTests(null);
-        console.log(error);
-      }
-      if (data) {
-        // setTests(data);
-        console.log(data);
-        // setFetchError(null);
-      }
-    };
-    fetchUsers();
-  }, []);
+  // useEffect(() => {
+  //   const fetchUsers = async () => {
+  //     const { data, error } = await supabase
+  //       .from("Orders") // Name of Table
+  //       // .select()
+  //       // .select(
+  //       //   `Users (name,address),Products (name,price,category,description,cfootprint,purl,seller)`
+  //       // )
+  //       .select(`*,Products (*,Sellers(*)),Users(*)`)
+  //       .eq("user", "0x562f28a7F5B904a6523FF705881Cb8c60aa794CB");
+
+  //     if (error) {
+  //       // setFetchError("Could not fetch Users");
+  //       // setTests(null);
+  //       console.log(error);
+  //     }
+  //     if (data) {
+  //       // setTests(data);
+  //       console.log(data);
+  //       // setFetchError(null);
+  //     }
+  //   };
+  //   fetchUsers();
+  // }, []);
 
   const assignDelivery = async () => {
     // if (orderID) {
@@ -67,15 +75,13 @@ const Dashboard = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
+    const account = signer.getAddress();
     const contract = new ethers.Contract(
       CONTRACT_ADDRESS,
       CONTRACT_ABI,
       signer
     );
-    const tx = await contract.assignDeliverAgent(
-      orderID,
-      "0x562f28a7F5B904a6523FF705881Cb8c60aa794CB"
-    );
+    const tx = await contract.assignDeliverAgent(sellerData.Por, account);
     const receipt = await tx.wait();
     console.log(receipt);
     setLoader(false);
@@ -115,31 +121,30 @@ const Dashboard = () => {
               className="h-[100%]"
             ></img>
           </div>
-          <div className="w-[100%] flex gap-2">
-            <div className="w-[550px]">
-              <h1 className="text-[1.2rem]">Galaxy M53 (4GB | 64 GB )</h1>
-              <h2 className="text-[1.7rem] font-semibold">₹31999</h2>
-
-              <ul className="font-light list-disc ml-4 flex flex-col gap-1 text-[0.8rem]">
-                <li>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                </li>
-                <li>
-                  Donec augue tellus, placerat nec sem eget, consequat malesuada
-                  mauris. Mauris hendrerit sed sapien vitae tincidunt. Praesent
-                  volutpat, erat vel faucibus tristique
-                </li>
-                <li>Fusce cursus eu sapien et luctus.</li>
-                <li>
-                  magna sem luctus ante, a mollis velit sem eu nunc. Aliquam nec
-                  pharetra leo.
-                </li>
-              </ul>
+          <div className="w-[100%] flex gap-3">
+            <div className="w-[550px] flex flex-col gap-2">
+              <h1 className="text-[1.2rem]">
+                {sellerData ? sellerData.Products.name : "name"}
+              </h1>
+              <h2 className="text-[1.7rem] font-semibold">
+                ${sellerData ? sellerData.Products.price : "price"}
+              </h2>
+              <p className="text-[#249B3E] font-medium text-[1rem]">
+                CO2 Footprint :
+                {sellerData.Products ? sellerData.Products.cfootprint : "cfp"}g
+              </p>
+              <p className="font-light text-[0.9rem]">
+                {sellerData ? sellerData.Products.description : "description"}
+              </p>
+              <p>Ordered by : {sellerData ? sellerData.Users.name : "name"}</p>
+              <p>
+                Deliver to : {sellerData ? sellerData.Users.address : "address"}
+              </p>
             </div>
             <div className=" flex  flex-col gap-5">
-              <div className="flex flex-col gap-5 items-center justify-center">
+              {/* <div className="flex flex-col gap-5 items-center justify-center">
                 <div className="flex flex-col gap-1">
-                  <label for="oderId">Order Id</label>
+                  <label htmlFor="oderId">Order Id</label>
                   <input
                     type="number"
                     id="oderId"
@@ -150,7 +155,7 @@ const Dashboard = () => {
                   ></input>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label for="agentAddr">Delivery Agent Address</label>
+                  <label htmlFor="agentAddr">Delivery Agent Address</label>
                   <input
                     type="text"
                     id="agentAddr"
@@ -160,13 +165,13 @@ const Dashboard = () => {
                     onChange={(e) => setAddress(e.target.value)}
                   ></input>
                 </div>
-              </div>
+              </div> */}
               <div className="">
                 <button
                   onClick={() => assignDelivery()}
                   className="text-[1.3rem] font-medium cursor-pointer text-[#ffffff] text-center bg-primaryColor py-3 px-4 rounded-lg  hover:bg-[#007AAF]"
                 >
-                  Assign Order
+                  Reached to Location
                 </button>
               </div>
             </div>

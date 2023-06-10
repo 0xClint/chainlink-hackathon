@@ -20,7 +20,7 @@ const Deliver = () => {
       CONTRACT_ABI,
       signer
     );
-    const tx = await contract.deleveryReached(1);
+    const tx = await contract.deleveryReached(3);
     const receipt = await tx.wait();
     console.log(receipt);
     setLoader(false);
@@ -38,9 +38,9 @@ const Deliver = () => {
       signer
     );
     const tx = await contract.deliveryComplete(
-      1,
+      3,
       converter.hexToDec(
-        "0x00000000000000000000000000000000000000000000000000000000000202ae"
+        "0x00000000000000000000000000000000000000000000000000000000000e5cab"
       )
     );
     const receipt = await tx.wait();

@@ -21,7 +21,7 @@ const Success = () => {
       CONTRACT_ABI,
       signer
     );
-    const tx1 = await contract.generateOTP(1);
+    const tx1 = await contract.generateOTP(3);
     const receipt1 = await tx1.wait();
     console.log(receipt1);
     // console.log(Number(receipt1.logs[0].topics[1]));
@@ -44,9 +44,9 @@ const Success = () => {
 
     const tx1 = await contract.getMyOTP(
       converter.hexToDec(
-        "0xe493cc40cbb70aacdf6506cebf75469d208eb769aa423864621580b40e795bfc"
+        "0x38c676bd41934585a727741782833deaee0ae76ffb49cdc5a23ac26dba9f11b5"
       ),
-      1
+      3
     );
     const receipt1 = await tx1.wait();
     console.log(receipt1);
