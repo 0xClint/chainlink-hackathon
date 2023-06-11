@@ -9,7 +9,9 @@ import supabase from "../config/supabase";
 var converter = require("hex2dec");
 
 const Success = () => {
-  const [OTP, setOTP] = useState(false);
+  const [OTP, setOTP] = useState("");
+  const [timer, setTimer] = useState(80);
+  const [success, setSuccess] = useState(false);
   const [pAddress, setpAddress] = useState("");
   const [productData, setProductData] = useState("");
   const [loader, setLoader] = useState(false);
@@ -48,14 +50,14 @@ const Success = () => {
         console.log(error);
       }
       if (data) {
-        console.log(data);
+        // console.log(data);
         setpAddress(data[0].address);
         // setProductData(data[0]);
       }
     };
     setAddress();
   }, []);
-  console.log(productData);
+  // console.log(productData);
 
   const getOTP = async () => {
     setLoader(true);
@@ -67,63 +69,129 @@ const Success = () => {
       CONTRACT_ABI,
       signer
     );
-    // console.log(productData.Orders[productData.Orders.length - 1].id);
+    console.log(productData.Orders[productData.Orders.length - 1].id);
     const tx1 = await contract.generateOTP(
       productData.Orders[productData.Orders.length - 1].id
     );
     const receipt1 = await tx1.wait();
+    // console.log(receipt1);
     let reqID = await converter.hexToDec(receipt1.events[2].topics[1]);
-    console.log(reqID, typeof reqID);
+    console.log("redID: " + reqID);
 
-    // setTimeout(async () => {
-    //   console.log("2nd Contract run");
-    //   const tx2 = await contract.getMyOTP(reqID, productData.Orders[0].id);
-    //   const receipt2 = await tx2.wait();
-    //   console.log(receipt2);
-    // }, 15000);
+    setTimeout(async () => {
+      console.log("2nd Contract run");
 
-    setLoader(false);
+      const tx2 = await contract.getMyOTP(
+        reqID,
+        productData.Orders[productData.Orders.length - 1].id
+      );
+      const receipt2 = await tx2.wait();
+      let OTP = await converter.hexToDec(receipt2.events[0].topics[1]);
+      await setOTP(OTP);
+      console.log("OTP: " + OTP);
+      setSuccess(true);
+    }, 50000);
+
+    // ***********************************************
+    const intervalId = setInterval(() => {
+      setTimer((prevSeconds) => prevSeconds - 1);
+    }, 1000);
+
+    setTimeout(async () => {
+      clearInterval(intervalId);
+      // setSuccess(false);
+      // setLoader(false);
+    }, 80000);
+    // ***********************************************
   };
 
-  const tempOTP = async () => {
-    setLoader(true);
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      CONTRACT_ABI,
-      signer
-    );
-
-    const tx1 = await contract.getMyOTP(
-      "100823545029669307299012045442486703679799424924882425519381664236734673263872",
-      productData.Orders[productData.Orders.length - 1].id
-    );
-    const receipt1 = await tx1.wait();
-    let OTP = await converter.hexToDec(receipt1.events[0].topics[1]);
-    console.log(receipt1, OTP);
-    setLoader(false);
-  };
+  // const tempOTP = async () => {
+  //   setSuccess(true);
+  //   const intervalId = setInterval(() => {
+  //     setTimer((prevSeconds) => prevSeconds - 1);
+  //   }, 1000);
+  //   setTimeout(async () => {
+  //     clearInterval(intervalId);
+  //     // setSuccess(false);
+  //   }, 60000);
+  // setLoader(true);
+  // const provider = new ethers.providers.Web3Provider(window.ethereum);
+  // await provider.send("eth_requestAccounts", []);
+  // const signer = provider.getSigner();
+  // const contract = new ethers.Contract(
+  //   CONTRACT_ADDRESS,
+  //   CONTRACT_ABI,
+  //   signer
+  // );
+  // console.log(productData.Orders[productData.Orders.length - 1].id);
+  // const tx1 = await contract.getMyOTP(
+  //   "78580725066007488384178671274494881037686379852825577345749817239985848510726",
+  //   productData.Orders[productData.Orders.length - 1].id
+  // );
+  // const receipt1 = await tx1.wait();
+  // let OTP = await converter.hexToDec(receipt1.events[0].topics[1]);
+  // console.log(OTP);
+  // setLoader(false);
+  // };
 
   return (
     <div>
       {loader && (
         <div
-          className="fixed w-screen h-screen bg-slate-500 flex justify-center items-center"
-          style={{ background: "rgba(255, 255, 255, 0.65)" }}
+          className="fixed w-screen h-[100%] bg-slate-500 flex justify-center items-center -z-1"
+          style={{ background: "rgba(0, 0, 0, 0.27)" }}
         >
-          <Lottie
-            loop
-            animationData={loaderGif}
-            play
-            style={{
-              width: 200,
-              height: 200,
-            }}
-          />
+          <div className="z-1000 w-[400px] text-center  bg-[#ffffff] rounded-xl py-10 px-5 flex flex-col justify-center items-center gap-5">
+            <div className="flex w-[80%] flex-col justify-center items-center">
+              <h2 className=" text-[1.5rem] mb-2">
+                {success ? "OTP Generated" : "Please Wait"}
+              </h2>
+              <p className="font-medium w-[100%] ">
+                {success ? "Thank You for Ordering" : "It is processing in..."}
+              </p>
+            </div>
+            {success ? (
+              <div>
+                <p className="text-[1.5rem] font-medium mb-3">OTP Here!</p>
+                <input
+                  type="text"
+                  className="bg-[#F3F9FB] text-center text-[2rem] w-[200px] h-12 p-5 rounded-md"
+                  value={"7394"}
+                  readOnly
+                ></input>
+              </div>
+            ) : (
+              <div>
+                <div className="w-[80px] h-[80px]">
+                  <Lottie
+                    loop
+                    animationData={loaderGif}
+                    play
+                    style={{
+                      width: 150,
+                      height: 150,
+                      transform: "translate(-40px,-40px)",
+                    }}
+                  />
+                </div>
+                <div>{timer} sec</div>
+              </div>
+            )}
+
+            {success && (
+              <Link to={`/`}>
+                <button
+                  onClick={() => setLoader(false)}
+                  className="bg-primaryColor text-[#ffffff] text-white py-2 px-6 w-52 rounded-[5px] text-[1.1rem] hover:bg-[#007AAF]"
+                >
+                  Go to home
+                </button>
+              </Link>
+            )}
+          </div>
         </div>
       )}
+
       <Header />
       <div className="w-[100vw]">
         <ul className="flex justify-center gap-3 font-medium text-[0.9rem] my-3">
@@ -157,10 +225,12 @@ const Success = () => {
         </div>
       </div>
       <div className="flex flex-col mt-10 mx-[5%] gap-5 text-[#008ECC] rounded-xl border-[#B9B9B9] border-[1px] py-5 px-10">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-        consectetur, est id consequat ultricies, nibh lacus vehicula nisl, eu
-        auctor turpis ante eu ante. Fusce cursus eu sapien et luctus. Donec eu
-        diam quis nunc interdum luctus. Ut velit metus, laoreet ut justo vitae
+        At the time of delivery, an OTP is generated for one-time use. The OTP
+        is communicated to you or your representative by the delivery person
+        through a secure channel, such as a dedicated delivery tracking
+        application or messaging service. You or your representative enter the
+        OTP into the delivery person's device or application to verify the
+        authenticity of the delivery.
       </div>
       <div className="flex mx-[5%] gap-5 my-5">
         <div className="w-[100%] flex gap-6 rounded-xl border-[#B9B9B9] border-[1px] py-5 px-10">
@@ -200,24 +270,23 @@ const Success = () => {
               101233
             </div>
           ) : (
-            <div>
+            <div className="text-[2rem]">
               <div
                 onClick={() => getOTP()}
-                className="flex flex-col gap-5 mt-7 h-20 border-[1px] bg-primaryColor cursor-pointer text-[#ffffff] border-primaryColor rounded-lg hover:bg-[#007AAF] justify-center items-center text-[2.7rem] font-medium"
+                className="flex flex-col gap-5 mt-7 h-20 border-[1px] bg-primaryColor cursor-pointer text-[#ffffff] border-primaryColor rounded-lg hover:bg-[#007AAF] justify-center items-center font-medium"
+              >
+                Generate OTP
+              </div>
+              {/* <div
+                onClick={() => tempOTP()}
+                className="flex flex-col gap-5 mt-7 h-20 border-[1px] bg-primaryColor cursor-pointer text-[#ffffff] border-primaryColor rounded-lg hover:bg-[#007AAF] justify-center items-center font-medium"
               >
                 Get OTP
-              </div>
-              <div
-                onClick={() => tempOTP()}
-                className="flex flex-col gap-5 mt-7 h-20 border-[1px] bg-primaryColor cursor-pointer text-[#ffffff] border-primaryColor rounded-lg hover:bg-[#007AAF] justify-center items-center text-[2.7rem] font-medium"
-              >
-                temp otp
-              </div>
+              </div> */}
             </div>
           )}
           <p className="mt-4 text-[0.9rem]">
-            magna sem luctus ante, a mollis velit sem eu nunc. Aliquam nec
-            pharetra.
+            Please wait for OTP generation and then request OTP
           </p>
         </div>
       </div>

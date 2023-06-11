@@ -62,7 +62,7 @@ const ConnectWallet = () => {
           console.log(error);
         }
         if (data) {
-          console.log(data);
+          // console.log(data);
           await setName((await data) && data[0] ? data[0].name : "");
           isSeller = data && data[0] ? true : false;
         }

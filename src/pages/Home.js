@@ -27,6 +27,7 @@ const Home = () => {
   const [electronics, setElectronics] = useState();
   const [isUser, setisUser] = useState(true);
   const [grocery, setGrocery] = useState();
+  const [fashion, setFashion] = useState();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -45,6 +46,9 @@ const Home = () => {
         );
         await setGrocery(
           await data.filter((item) => item["category"] == "Grocery")
+        );
+        await setFashion(
+          await data.filter((item) => item["category"] == "Fashion")
         );
         await setProductData(data);
       }
@@ -175,10 +179,12 @@ const Home = () => {
               <p className="text-[#666666] font-semibold text-[1.2rem]">
                 Electronics
               </p>
-              <div className="flex items-center gap-2 font-medium cursor-pointer hover:text-[#666666]">
-                View All
-                <ArrowRight className="" />
-              </div>
+              <Link to="/result/Electronics">
+                <div className="flex items-center gap-2 font-medium cursor-pointer hover:text-[#666666]">
+                  View All
+                  <ArrowRight className="" />
+                </div>
+              </Link>
             </div>
             <div className="w-full h-[2px] bg-[#EDEDED] mt-2">
               <div className="w-[110px] h-[2px] bg-primaryColor"></div>
@@ -198,10 +204,13 @@ const Home = () => {
               <p className="text-[#666666] font-semibold text-[1.2rem]">
                 Grocery
               </p>
-              <div className="flex items-center gap-2 font-medium cursor-pointer hover:text-[#666666]">
-                View All
-                <ArrowRight className="" />
-              </div>
+
+              <Link to="/result/Grocery">
+                <div className="flex items-center gap-2 font-medium cursor-pointer hover:text-[#666666]">
+                  View All
+                  <ArrowRight className="" />
+                </div>
+              </Link>
             </div>
             <div className="w-full h-[2px] bg-[#EDEDED] mt-2">
               <div className="w-[110px] h-[2px] bg-primaryColor"></div>
@@ -216,6 +225,31 @@ const Home = () => {
           </div>
         </div>
         <div className="CategorySection mx-[5%] my-10">
+          <div className="headingContent w-[100%]">
+            <div className="flex justify-between">
+              <p className="text-[#666666] font-semibold text-[1.2rem]">
+                Fashion
+              </p>
+              <Link to="/result/Fashion">
+                <div className="flex items-center gap-2 font-medium cursor-pointer hover:text-[#666666]">
+                  View All
+                  <ArrowRight className="" />
+                </div>
+              </Link>
+            </div>
+            <div className="w-full h-[2px] bg-[#EDEDED] mt-2">
+              <div className="w-[110px] h-[2px] bg-primaryColor"></div>
+            </div>
+          </div>
+          <div className="cardContainer w-[100%] flex justify-start gap-5 my-5">
+            {fashion
+              ? fashion.map((data) => {
+                  return <ProductCard key={data.pid} data={data} />;
+                })
+              : ""}
+          </div>
+        </div>
+        {/* <div className="CategorySection mx-[5%] my-10">
           <div className="headingContent w-[100%]">
             <div className="flex justify-between">
               <p className="text-[#666666] font-semibold text-[1.2rem]">
@@ -237,7 +271,7 @@ const Home = () => {
               return <CategoryCard key={id} />;
             })}
           </div>
-        </div>
+        </div> */}
       </div>
       <Footer />
     </div>

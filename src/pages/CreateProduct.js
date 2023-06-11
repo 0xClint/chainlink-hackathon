@@ -48,19 +48,24 @@ const CreateProduct = () => {
   const [cfp, setcfp] = useState("");
   const [category, setCategory] = useState("");
   const [img, setImg] = useState("");
+  const [pId, setpId] = useState(1);
 
   useEffect(() => {
     const fetchProducts = async () => {
       const { data, error } = await supabase
         .from("Products") // Name of Table
         .select();
-      // .eq("pid", params.id);
 
       if (error) {
         console.log(error);
       }
       if (data) {
         console.log(data);
+        if (data && data[0]) {
+          setpId(data.length + 1);
+        } else {
+          setpId(1);
+        }
       }
     };
     fetchProducts();
@@ -71,7 +76,7 @@ const CreateProduct = () => {
       .from("Products")
       .insert([
         {
-          // pid: 9,
+          pid: pId,
           category,
           cfootprint: cfp,
           description,
@@ -103,8 +108,9 @@ const CreateProduct = () => {
       CONTRACT_ABI,
       signer
     );
+    console.log("pid: " + pId);
     const tx = await contract.addProduct(
-      1,
+      pId,
       account,
       ethers.utils.parseEther(`${Number(price) / 1000000}`)
     );
@@ -147,7 +153,7 @@ const CreateProduct = () => {
               className="h-32 mb-2"
             ></img>
             <div>
-              <Link to={`/orders`}>
+              <Link to={`/`}>
                 <button
                   // onClick={() => userPetitionSign()}
                   className="bg-primaryColor text-[#ffffff] text-white py-2 px-6 w-52 rounded-[5px] text-[1.1rem] hover:bg-[#007AAF]"

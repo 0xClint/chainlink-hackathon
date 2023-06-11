@@ -49,6 +49,19 @@ const Deliver = () => {
   //   setLoader(false);
   //   // }
   // };
+  const updateOrder = async () => {
+    let { data, error } = await supabase
+      .from("Orders")
+      .update([{}]) // Name of Table
+      .eq("account")
+      .select();
+    if (error) {
+      console.log(error);
+    }
+    if (data) {
+      console.log(data);
+    }
+  };
 
   const orderCompleted = async () => {
     if (OTP) {

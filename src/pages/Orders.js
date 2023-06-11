@@ -16,21 +16,15 @@ const Orders = () => {
 
       const { data, error } = await supabase
         .from("Orders") // Name of Table
-        // .select()
-        // .select(
-        //   `Users (name,address),Products (name,price,category,description,cfootprint,purl,seller)`
-        // )
         .select(`*,Products (*)`)
         .eq("user", address);
 
       if (error) {
-        // setFetchError("Could not fetch Users");
-        // setTests(null);
         console.log(error);
       }
       if (data) {
         // setTests(data);
-        console.log(data);
+        // console.log(data);
         setProductData(data);
       }
     };

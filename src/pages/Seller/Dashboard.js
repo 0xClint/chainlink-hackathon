@@ -47,7 +47,7 @@ const Dashboard = () => {
       }
     });
     console.log(sellerData);
-    return sellerData;
+    return sellerData.reverse();
   };
 
   const assignDelivery = async (orderId, pId) => {

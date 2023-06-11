@@ -40,7 +40,7 @@ const Payment = () => {
       }
     };
     fetchUserAddr();
-  }, []);
+  }, [productData]);
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -288,14 +288,24 @@ const Payment = () => {
               : "Please provide valid address."}
           </p>
           <p className="text-[#E51F1F] mt-1 mb-1 text-center">
-            {" "}
             {!isWeb3Enabled && "To pay Please connect Metamask"}
           </p>
-          <div
-            onClick={() => payNow()}
-            className="text-[1.3rem] font-medium cursor-pointer text-[#ffffff] text-center bg-primaryColor py-3 px-4 rounded-lg  hover:bg-[#007AAF]"
-          >
-            PAY NOW
+          <div className="flex flex-col gap-3">
+            <a href="https://verse.bitcoin.com/" target="_blank">
+              <button
+                // onClick={() => }
+                className=" flex justify-center items-center py-2 px-4 gap-5 text-[1.3rem] w-[100%] font-medium cursor-pointer text-[#000000] text-center bg-[#ffffff] rounded-lg border-2 border-[#000000] hover:text-[#0085FF] hover:border-[#0085FF]"
+              >
+                Swap to ETH
+                <img src={require("../assets/verse.png")} width={40}></img>
+              </button>
+            </a>
+            <button
+              onClick={() => payNow()}
+              className="text-[1.3rem] font-medium cursor-pointer text-[#ffffff] text-center bg-primaryColor py-3 px-4 rounded-lg  hover:bg-[#007AAF]"
+            >
+              PAY NOW
+            </button>
           </div>
         </div>
       </div>
