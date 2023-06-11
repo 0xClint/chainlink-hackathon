@@ -12,6 +12,7 @@ const Deliver = () => {
   const [loader, setLoader] = useState(false);
   const [productData, setProductData] = useState("");
   const [OTP, setOTP] = useState("");
+  const [success, setSuccess] = useState(true);
   const params = useParams();
 
   useEffect(() => {
@@ -32,23 +33,6 @@ const Deliver = () => {
     fetchProducts();
   }, []);
 
-  // const reachedToLocation = async () => {
-  //   // if (orderID) {
-  //   setLoader(true);
-  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //   await provider.send("eth_requestAccounts", []);
-  //   const signer = provider.getSigner();
-  //   const contract = new ethers.Contract(
-  //     CONTRACT_ADDRESS,
-  //     CONTRACT_ABI,
-  //     signer
-  //   );
-  //   const tx = await contract.deleveryReached(3);
-  //   const receipt = await tx.wait();
-  //   console.log(receipt);
-  //   setLoader(false);
-  //   // }
-  // };
   const updateOrder = async () => {
     let { data, error } = await supabase
       .from("Orders")
@@ -81,12 +65,42 @@ const Deliver = () => {
       );
       const receipt = await tx.wait();
       console.log(receipt);
+      setSuccess(true);
       setLoader(false);
     }
   };
 
   return (
     <div>
+      {success && (
+        <div
+          className="fixed w-screen h-[100%] bg-slate-500 flex justify-center items-center -z-1"
+          style={{ background: "rgba(0, 0, 0, 0.27)" }}
+        >
+          <div className="z-1000 w-[400px] text-center  bg-[#ffffff] rounded-xl py-10 px-10 flex flex-col justify-center items-center gap-5">
+            <div className="flex flex-col justify-center items-center">
+              <h2 className=" text-[1.5rem] mb-2">OTP Verified</h2>
+              <p className="font-medium w-[70%] ">
+                Order Delivered Successfully
+              </p>
+            </div>
+            <img
+              src={require("../../assets/success.png")}
+              className="h-32 mb-2"
+            ></img>
+            <div>
+              <Link to={`/orders`}>
+                <button
+                  // onClick={() => userPetitionSign()}
+                  className="bg-primaryColor text-[#ffffff] text-white py-2 px-6 w-52 rounded-[5px] text-[1.1rem] hover:bg-[#007AAF]"
+                >
+                  Track other Orders
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
       {loader && (
         <div
           className="fixed w-screen h-screen bg-slate-500 flex justify-center items-center"
@@ -110,20 +124,6 @@ const Deliver = () => {
         </p>
         <div className="w-full h-[2px] bg-primaryColor mt-2"></div>
       </div>
-      {/* <div className="mt-10 mx-[5%]">
-        <button
-          onClick={() => reachedToLocation()}
-          className="text-[1.3rem] font-medium cursor-pointer text-[#ffffff] text-center bg-primaryColor py-3 px-4 rounded-lg  hover:bg-[#007AAF]"
-        >
-          Reached to Location
-        </button>
-        <button
-          onClick={() => orderCompleted()}
-          className="text-[1.3rem] font-medium cursor-pointer text-[#ffffff] text-center bg-primaryColor py-3 px-4 rounded-lg  hover:bg-[#007AAF]"
-        >
-          Order Completed
-        </button>
-      </div> */}
       <div className="flex mx-[5%] gap-5 my-10">
         <div className="w-[100%] flex gap-6 rounded-xl border-[#B9B9B9] border-[1px] py-5 px-10">
           <div className="min-w-[250px] h-[250px] flex justify-center items-center bg-[#F5F5F5] rounded-2xl">
@@ -156,7 +156,7 @@ const Deliver = () => {
           </div>
         </div>
         <div className="max-w-[300px] rounded-xl border-[#B9B9B9] border-[1px] py-5 px-6">
-          <h2 className="text-[1.2rem] font-medium mb-3">Verify OTP</h2>
+          <h2 className="text-[1.2rem] font-medium mb-3">Enter OTP</h2>
           <div className="flex flex-col gap-2 my-4 mb-6">
             <input
               type="number"
@@ -169,11 +169,10 @@ const Deliver = () => {
             onClick={() => orderCompleted()}
             className="text-[1.3rem] font-medium cursor-pointer text-[#ffffff] w-[100%] text-center bg-primaryColor py-3 px-4 rounded-lg  hover:bg-[#007AAF]"
           >
-            Order Completed
+            Verify OTP
           </button>
           <p className="mt-4 text-[0.9rem]">
-            magna sem luctus ante, a mollis velit sem eu nunc. Aliquam nec
-            pharetra.
+            Please don't share this otp with anyone
           </p>
         </div>
       </div>

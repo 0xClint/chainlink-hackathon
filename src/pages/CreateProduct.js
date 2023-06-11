@@ -27,7 +27,7 @@ const optionData = [
   },
   {
     id: 5,
-    name: "Home & Kitchen",
+    name: "Home&Kitchen",
   },
   {
     id: 6,
@@ -35,7 +35,7 @@ const optionData = [
   },
   {
     id: 7,
-    name: "Toys & Luggage",
+    name: "Toys&Luggage",
   },
 ];
 
@@ -153,11 +153,8 @@ const CreateProduct = () => {
               className="h-32 mb-2"
             ></img>
             <div>
-              <Link to={`/`}>
-                <button
-                  // onClick={() => userPetitionSign()}
-                  className="bg-primaryColor text-[#ffffff] text-white py-2 px-6 w-52 rounded-[5px] text-[1.1rem] hover:bg-[#007AAF]"
-                >
+              <Link to={`/orders`}>
+                <button className="bg-primaryColor text-[#ffffff] text-white py-2 px-6 w-52 rounded-[5px] text-[1.1rem] hover:bg-[#007AAF]">
                   Track your Order
                 </button>
               </Link>
@@ -309,7 +306,7 @@ const CreateProduct = () => {
               </div>
             </div> */}
             <div className="flex flex-col gap-1">
-              <label>purl</label>
+              <label>Image url</label>
               <input
                 type="text"
                 value={img}

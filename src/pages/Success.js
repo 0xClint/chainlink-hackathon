@@ -156,7 +156,7 @@ const Success = () => {
                 <input
                   type="text"
                   className="bg-[#F3F9FB] text-center text-[2rem] w-[200px] h-12 p-5 rounded-md"
-                  value={"7394"}
+                  value={OTP}
                   readOnly
                 ></input>
               </div>
@@ -267,7 +267,7 @@ const Success = () => {
           <h2 className="text-[1.2rem] font-medium mb-3">Your OTP</h2>
           {OTP ? (
             <div className="flex flex-col gap-5 mt-7 h-20 border-[1px] border-[#747474] rounded justify-center items-center text-[3rem] font-medium">
-              101233
+              {OTP}
             </div>
           ) : (
             <div className="text-[2rem]">

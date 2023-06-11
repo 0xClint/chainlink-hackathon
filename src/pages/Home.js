@@ -42,13 +42,15 @@ const Home = () => {
       if (data) {
         console.log(data);
         await setElectronics(
-          await data.filter((item) => item["category"] == "Electronics")
+          await data
+            .filter((item) => item["category"] == "Electronics")
+            .slice(0, 5)
         );
         await setGrocery(
-          await data.filter((item) => item["category"] == "Grocery")
+          await data.filter((item) => item["category"] == "Grocery").slice(0, 5)
         );
         await setFashion(
-          await data.filter((item) => item["category"] == "Fashion")
+          await data.filter((item) => item["category"] == "Fashion").slice(0, 5)
         );
         await setProductData(data);
       }
