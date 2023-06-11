@@ -8,7 +8,8 @@ const Header = () => {
   return (
     <div className="flex items-center justify-between px-[5%] h-20 border-[#C8C8C8] border-b-2">
       <Link to="/">
-        <div className="font-bold text-[2rem] text-[#666666]">ZKART</div>
+        {/* <div className="font-bold text-[2rem] text-[#666666]">ZKART</div> */}
+        <img src={require("../assets/logo.png")} className="h-[60px]"></img>
       </Link>
       <div className="flex items-center gap-10">
         <div className="flex justify-start items-center bg-[#F3F9FB] w-[700px] rounded-md px-2">
