@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const ProductCard = ({ data }) => {
   return (
-    <Link to={`product/${data.pid}`}>
+    <Link to={`/product/${data.pid}`}>
       <div className="h-[300px] w-[250px] rounded-2xl overflow-hidden border-[#EDEDED] border-2 cursor-pointer hover:border-primaryColor">
         <div className="bg-[#F5F5F5] h-[190px] w-[100%] flex items-center justify-center">
           <img

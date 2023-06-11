@@ -61,11 +61,10 @@ const Deliver = () => {
         CONTRACT_ABI,
         signer
       );
+      // console.log(productData.Orders[productData.Orders.length - 1].id);
       const tx = await contract.deliveryComplete(
-        3,
-        converter.hexToDec(
-          "0x00000000000000000000000000000000000000000000000000000000000e5cab"
-        )
+        productData.Orders[productData.Orders.length - 1].id,
+        OTP
       );
       const receipt = await tx.wait();
       console.log(receipt);
@@ -147,7 +146,7 @@ const Deliver = () => {
           <h2 className="text-[1.2rem] font-medium mb-3">Verify OTP</h2>
           <div className="flex flex-col gap-2 my-4 mb-6">
             <input
-              type="text"
+              type="number"
               className="bg-[#F3F9FB] w-[100%] h-12 p-5 rounded-md"
               value={OTP}
               onChange={(e) => setOTP(e.target.value)}

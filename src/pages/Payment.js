@@ -84,7 +84,7 @@ const Payment = () => {
       const account = await signer.getAddress();
       const balance = ethers.utils.formatEther(await signer.getBalance());
 
-      if (balance > productData.price / 1836) {
+      if (balance > productData.price / 1000000) {
         setLoader(true);
         const contract = new ethers.Contract(
           CONTRACT_ADDRESS,
@@ -162,34 +162,53 @@ const Payment = () => {
       <Header />
       <div className="w-[100vw]">
         <ul className="flex justify-center gap-3 font-medium text-[0.9rem] my-3">
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Premium Fruits
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Home & Kitchen
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Electronics
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Fashion
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Beauty
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Sports
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer">
-            Toys & Luggage
-          </li>
+          <Link to="/result/Fashion">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Fashion
+            </li>
+          </Link>
+          <Link to="/result/Grocery">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Grocery
+            </li>
+          </Link>
+          <Link to="/result/Electronics">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Electronics
+            </li>
+          </Link>
+          <Link to="/result/Fashion">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Fashion
+            </li>
+          </Link>
+          <Link to="/result/Beauty">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Beauty
+            </li>
+          </Link>
+          <Link to="/result/Sports">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Sports
+            </li>
+          </Link>
+          <Link to="/result/Home & Kitchen">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Home & Kitchen
+            </li>
+          </Link>
+          <Link to="/result/Toys & Luggage">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Toys & Luggage
+            </li>
+          </Link>
         </ul>
         <div className=" h-[2px] bg-primaryColor mt-8 mx-[5%]"></div>
       </div>
       <div className="flex mx-[5%] gap-5 my-10">
         <div className="w-[100%] flex flex-col gap-5">
           <div className="w-[100%] rounded-xl border-[#B9B9B9] border-[1px] py-5 px-10">
-            <h2 className="text-[1.2rem] font-medium mb-5">Deliver To:</h2>
+            <h2 className="text-[1.2rem] font-medium mb-5">Deliver At:</h2>
             <textarea
               className="bg-[#F3F9FB] w-full h-32 p-5 rounded-md"
               placeholder="Address here..."
@@ -225,14 +244,18 @@ const Payment = () => {
           </div>
         </div>
         <div className="min-w-[300px]">
-          <div className="w-full rounded-xl border-[#B9B9B9] border-[1px] py-5 px-6 h-[250px]">
+          <div className="w-full rounded-xl border-[#B9B9B9] border-[1px] py-5 px-6 h-[320px]">
             <h2 className="text-[1.2rem] font-medium mb-3">Price Details</h2>
             <div className="flex flex-col gap-5 mt-7">
               <div className="flex justify-between">
-                <p>Shipping</p>
+                <p>Price</p>
                 <p className="font-medium">
                   ${productData ? productData.price : "price"}
                 </p>
+              </div>
+              <div className="flex justify-between">
+                <p>Shipping</p>
+                <p className="font-medium">$10</p>
               </div>
               <div className="flex justify-between">
                 <p>Tax</p>
@@ -244,6 +267,10 @@ const Payment = () => {
                 </p>
               </div>
               <div className="h-[2px] w-full bg-[#000000]"></div>
+              <div className="flex justify-between">
+                <p>Discount</p>
+                <p className="font-medium">-$10</p>
+              </div>
               <div className="flex justify-between">
                 <p>Total</p>
                 <p className="font-medium">

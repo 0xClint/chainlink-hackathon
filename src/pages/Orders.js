@@ -65,27 +65,46 @@ const Orders = () => {
       <Header />
       <div className="w-[100vw]">
         <ul className="flex justify-center gap-3 font-medium text-[0.9rem] my-3">
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Premium Fruits
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Home & Kitchen
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Electronics
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Fashion
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Beauty
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Sports
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer">
-            Toys & Luggage
-          </li>
+          <Link to="/result/Fashion">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Fashion
+            </li>
+          </Link>
+          <Link to="/result/Grocery">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Grocery
+            </li>
+          </Link>
+          <Link to="/result/Electronics">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Electronics
+            </li>
+          </Link>
+          <Link to="/result/Fashion">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Fashion
+            </li>
+          </Link>
+          <Link to="/result/Beauty">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Beauty
+            </li>
+          </Link>
+          <Link to="/result/Sports">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Sports
+            </li>
+          </Link>
+          <Link to="/result/Home & Kitchen">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Home & Kitchen
+            </li>
+          </Link>
+          <Link to="/result/Toys & Luggage">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Toys & Luggage
+            </li>
+          </Link>
         </ul>
         <div className="headingContent mx-[5%] mt-5">
           <div className="w-[100%] flex justify-between items-center">

@@ -26,7 +26,6 @@ const Success = () => {
         console.log(error);
       }
       if (data) {
-        // console.log(data[0]);
         setProductData(data[0]);
       }
     };
@@ -49,7 +48,7 @@ const Success = () => {
         console.log(error);
       }
       if (data) {
-        // console.log(data);
+        console.log(data);
         setpAddress(data[0].address);
         // setProductData(data[0]);
       }
@@ -68,8 +67,10 @@ const Success = () => {
       CONTRACT_ABI,
       signer
     );
-    console.log(productData.Orders[0].id);
-    const tx1 = await contract.generateOTP(productData.Orders[0].id);
+    // console.log(productData.Orders[productData.Orders.length - 1].id);
+    const tx1 = await contract.generateOTP(
+      productData.Orders[productData.Orders.length - 1].id
+    );
     const receipt1 = await tx1.wait();
     let reqID = await converter.hexToDec(receipt1.events[2].topics[1]);
     console.log(reqID, typeof reqID);
@@ -85,7 +86,7 @@ const Success = () => {
   };
 
   const tempOTP = async () => {
-    // setLoader(true);
+    setLoader(true);
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
@@ -96,14 +97,12 @@ const Success = () => {
     );
 
     const tx1 = await contract.getMyOTP(
-      // converter.hexToDec(
-      //   "0x38c676bd41934585a727741782833deaee0ae76ffb49cdc5a23ac26dba9f11b5"
-      // ),
-      "32932750712193573740129442489268691016150639593294479398439624409457058254155",
-      3
+      "100823545029669307299012045442486703679799424924882425519381664236734673263872",
+      productData.Orders[productData.Orders.length - 1].id
     );
     const receipt1 = await tx1.wait();
-    console.log(receipt1);
+    let OTP = await converter.hexToDec(receipt1.events[0].topics[1]);
+    console.log(receipt1, OTP);
     setLoader(false);
   };
 

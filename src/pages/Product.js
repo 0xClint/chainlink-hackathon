@@ -13,13 +13,14 @@ const Product = () => {
     const fetchProducts = async () => {
       const { data, error } = await supabase
         .from("Products") // Name of Table
-        .select()
+        .select("*,Sellers(*)")
         .eq("pid", params.id);
 
       if (error) {
         console.log(error);
       }
       if (data) {
+        console.log(data);
         setProductData(data[0]);
       }
     };
@@ -31,27 +32,46 @@ const Product = () => {
       <Header />
       <div className="w-[100vw]">
         <ul className="flex justify-center gap-3 font-medium text-[0.9rem] my-3">
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Premium Fruits
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Home & Kitchen
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Electronics
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Fashion
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Beauty
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Sports
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer">
-            Toys & Luggage
-          </li>
+          <Link to="/result/Fashion">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Fashion
+            </li>
+          </Link>
+          <Link to="/result/Grocery">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Grocery
+            </li>
+          </Link>
+          <Link to="/result/Electronics">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Electronics
+            </li>
+          </Link>
+          <Link to="/result/Fashion">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Fashion
+            </li>
+          </Link>
+          <Link to="/result/Beauty">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Beauty
+            </li>
+          </Link>
+          <Link to="/result/Sports">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Sports
+            </li>
+          </Link>
+          <Link to="/result/Home & Kitchen">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Home & Kitchen
+            </li>
+          </Link>
+          <Link to="/result/Toys & Luggage">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Toys & Luggage
+            </li>
+          </Link>
         </ul>
         <div className=" h-[2px] bg-primaryColor mt-8 mx-[5%]"></div>
       </div>
@@ -90,20 +110,27 @@ const Product = () => {
       <div className="my-10 mx-[10%] flex gap-7">
         <div className="w-1/2 rounded-xl border-[#B9B9B9] border-[1px] py-5 px-8">
           <h2 className="text-[1.2rem] font-medium mb-3">Seller</h2>
-          <ul className="font-normal list-disc ml-4 flex flex-col gap-2">
-            <li>MNO Industries </li>
-            <li>PQR Limited</li>
-            <li>ABC Co.</li>
-            <li>QRS Inc.</li>
+          <ul className="font-normal ml-4 flex flex-col gap-2">
+            <li>
+              <b className="font-medium">Name:</b>{" "}
+              {productData ? productData.Sellers.name : "Seller name"}
+            </li>
+            <li>
+              <b className="font-medium">Location:</b>{" "}
+              {productData ? productData.Sellers.based : "Seller based"}
+            </li>
+            <li className="text-[0.9rem]">
+              <b className="text-[1rem] font-medium">Address:</b>{" "}
+              {productData ? productData.Sellers.account : "Seller based"}
+            </li>
           </ul>
         </div>
         <div className="w-1/2 rounded-xl border-[#B9B9B9] border-[1px] py-5 px-8">
           <h2 className="text-[1.2rem] font-medium mb-3">Shipper</h2>
-          <ul className="list-disc ml-4 flex flex-col gap-2 font-normal">
-            <li>DHL </li>
-            <li>FedEx</li>
-            <li>DTDC</li>
-            <li>Blue Dart</li>
+          <ul className="ml-4 flex flex-col gap-2 font-normal">
+            <li className="cursor-pointer hover:text-[#919191]">DHL </li>
+            <li className="cursor-pointer hover:text-[#919191]">DTDC</li>
+            <li className="cursor-pointer hover:text-[#919191]">Blue Dart</li>
           </ul>
         </div>
       </div>

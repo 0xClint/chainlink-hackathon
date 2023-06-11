@@ -49,14 +49,6 @@ const CreateProduct = () => {
   const [category, setCategory] = useState("");
   const [img, setImg] = useState("");
 
-  //   category: "Grocery";
-  //   cfootprint: -3;
-  //   description: "Citrus organic oranges from mars";
-  //   name: "Orange 1 piece";
-  //   price: 1;
-  //   purl: "https://images.pexels.com/photos/161559/background-bitter-breakfast-bright-161559.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1";
-  //   seller: 1;
-
   useEffect(() => {
     const fetchProducts = async () => {
       const { data, error } = await supabase
@@ -79,15 +71,14 @@ const CreateProduct = () => {
       .from("Products")
       .insert([
         {
-          pid: 8,
-          category: "Fashion",
-          cfootprint: 5,
-          description:
-            "Diamond Ring In 18Kt Rose Gold (5.06 gram) with Diamonds (0.3260 Ct)",
-          name: "Alsa Diamond Ring",
-          price: 200,
-          purl: "https://kinclimg7.bluestone.com/f_jpg,c_scale,w_828,q_80,b_rgb:f0f0f0/giproduct/BICM0449R15_RAA18DIG6XXXXXXXX_ABCD00-PICS-00001-1024-53472.png",
-          seller: "0xe468c2035adD65e1Feafeb6Ba4695990f7AB8F17",
+          // pid: 9,
+          category,
+          cfootprint: cfp,
+          description,
+          name: title,
+          price,
+          purl: img,
+          seller: account,
         },
       ]) // Name of Table
       .select();
@@ -112,17 +103,30 @@ const CreateProduct = () => {
       CONTRACT_ABI,
       signer
     );
-    // const tx = await contract.addProduct(
-    //   7,
-    //   account,
-    //   ethers.utils.parseEther(`${50 / 1000000}`)
-    // );
-    // const receipt = await tx.wait();
-    // console.log(receipt);
+    const tx = await contract.addProduct(
+      1,
+      account,
+      ethers.utils.parseEther(`${Number(price) / 1000000}`)
+    );
+    const receipt = await tx.wait();
+    console.log(receipt);
 
     await insertProduct(account);
+    setSuccess(true);
     setLoader(false);
   };
+
+  // async function uploadFile() {
+  //   console.log(img);
+  //   const { data, error } = await supabase.storage
+  //     .from("Product Photos")
+  //     .upload("10pix3m_1/mobile.png", img);
+  //   if (error) {
+  //     // Handle error
+  //   } else {
+  //     // Handle success
+  //   }
+  // }
 
   return (
     <div>
@@ -173,28 +177,49 @@ const CreateProduct = () => {
       )}
       <Header />
       <div className="w-[100vw]">
+        {/* <button onClick={() => uploadFile()}>add photo</button>
+        <button onClick={() => createBucket()}>create bucket</button> */}
         <ul className="flex justify-center gap-3 font-medium text-[0.9rem] my-3">
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Premium Fruits
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Home & Kitchen
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Electronics
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Fashion
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Beauty
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Sports
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer">
-            Toys & Luggage
-          </li>
+          <Link to="/result/Fashion">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Fashion
+            </li>
+          </Link>
+          <Link to="/result/Grocery">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Grocery
+            </li>
+          </Link>
+          <Link to="/result/Electronics">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Electronics
+            </li>
+          </Link>
+          <Link to="/result/Fashion">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Fashion
+            </li>
+          </Link>
+          <Link to="/result/Beauty">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Beauty
+            </li>
+          </Link>
+          <Link to="/result/Sports">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Sports
+            </li>
+          </Link>
+          <Link to="/result/Home & Kitchen">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Home & Kitchen
+            </li>
+          </Link>
+          <Link to="/result/Toys & Luggage">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Toys & Luggage
+            </li>
+          </Link>
         </ul>
         <div className="headingContent mx-[5%] mt-5">
           <div className="w-[100%] flex justify-between items-center">
@@ -266,7 +291,7 @@ const CreateProduct = () => {
             </div>
           </div>
           <div className="w-1/2 flex flex-col gap-10">
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <input
                 type="file"
                 onChangeCapture={(e) => setImg(e.target.files[0])}
@@ -276,11 +301,21 @@ const CreateProduct = () => {
               <div className="w-[100%] h-[400px] flex justify-center items-center border-[1px] border-[#000000]">
                 <UploadImage className="h-[100%]" />
               </div>
+            </div> */}
+            <div className="flex flex-col gap-1">
+              <label>purl</label>
+              <input
+                type="text"
+                value={img}
+                onChange={(e) => setImg(e.target.value)}
+                required
+                className="bg-[#FFFFF] w-[100%] h-10 p-5 rounded-md border-[1px] border-[#a9a9a9] font-normal"
+              ></input>
             </div>
             <div className="flex flex-col gap-1">
               <label>Price ( in $ )</label>
               <input
-                type="text"
+                type="number"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 required

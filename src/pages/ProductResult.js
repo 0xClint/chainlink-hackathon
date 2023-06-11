@@ -12,24 +12,19 @@ const ProductResult = () => {
     const fetchProducts = async () => {
       const { data, error } = await supabase
         .from("Products") // Name of Table
-        .select();
+        .select()
+        .eq("category", params.id);
 
       if (error) {
         console.log(error);
       }
       if (data) {
         console.log(data);
-        // if (data && data[0]) {
-        // setProductData(
-        // await searchProducts(await params.id.replace(/-/g, " "))
-        // );
-        // }
-        let search = await params.id.replace(/-/g, " ");
-        console.log(await searchProducts(search));
+        setProductData(data);
       }
     };
     fetchProducts();
-  }, []);
+  }, [params.id]);
   console.log(productData);
   function searchProducts(searchTerm) {
     // Convert the search term to lowercase for case-insensitive search
@@ -54,27 +49,46 @@ const ProductResult = () => {
       <Header />
       <div className="w-[100vw]">
         <ul className="flex justify-center gap-3 font-medium text-[0.9rem] my-3">
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Premium Fruits
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Home & Kitchen
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Electronics
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Fashion
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Beauty
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
-            Sports
-          </li>
-          <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer">
-            Toys & Luggage
-          </li>
+          <Link to="/result/Fashion">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Fashion
+            </li>
+          </Link>
+          <Link to="/result/Grocery">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Grocery
+            </li>
+          </Link>
+          <Link to="/result/Electronics">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Electronics
+            </li>
+          </Link>
+          <Link to="/result/Fashion">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Fashion
+            </li>
+          </Link>
+          <Link to="/result/Beauty">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Beauty
+            </li>
+          </Link>
+          <Link to="/result/Sports">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Sports
+            </li>
+          </Link>
+          <Link to="/result/Home&Kitchen">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Home&Kitchen
+            </li>
+          </Link>
+          <Link to="/result/Toys&Luggage">
+            <li className="py-1 px-3 rounded-2xl bg-[#F3F9FB] cursor-pointer hover:bg-[#E4F8FF]">
+              Toys&Luggage
+            </li>
+          </Link>
         </ul>
         <div className="headingContent mx-[5%]">
           <p className="text-[#666666] font-semibold text-[1.5rem]">Results</p>
@@ -146,12 +160,19 @@ const ProductResult = () => {
             </div>
           </div>
           <div className="productContainer flex flex-wrap gap-5">
-            {/* <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard /> */}
+            {productData
+              ? productData.map((data) => {
+                  return <ProductCard key={data.pid} data={data} />;
+                })
+              : ""}
           </div>
+          {productData && productData[0] ? (
+            ""
+          ) : (
+            <div className="text-center w-[100%] text-[1.5rem]">
+              No products Yet{" "}
+            </div>
+          )}
         </div>
       </div>
       <Footer />

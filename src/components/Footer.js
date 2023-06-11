@@ -3,7 +3,7 @@ import { Github } from "../assets";
 
 const Footer = () => {
   return (
-    <div className="h-14 flex justify-center items-center bg-[#E4F8FF] mt-[4rem]">
+    <div className="h-14 flex justify-center items-center bg-[#E4F8FF] ">
       <a
         href="https://github.com/Omkar0803/chainlink-hackathon"
         target="_blank"

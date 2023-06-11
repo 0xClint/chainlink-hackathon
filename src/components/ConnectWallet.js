@@ -8,6 +8,7 @@ import { useState } from "react";
 
 const ConnectWallet = () => {
   const [name, setName] = useState("");
+  const [seller, setSeller] = useState("");
   const [isSeller, setisSeller] = useState("");
 
   const {
@@ -50,10 +51,10 @@ const ConnectWallet = () => {
         await provider.send("eth_requestAccounts", []);
         const signer = provider.getSigner();
         const address = await signer.getAddress();
-        console.log(address + "sd");
+        let isSeller = false;
 
         const { data, error } = await supabase
-          .from("Users") // Name of Table
+          .from("Sellers") // Name of Table
           .select()
           .eq("account", address);
 
@@ -63,6 +64,21 @@ const ConnectWallet = () => {
         if (data) {
           console.log(data);
           await setName((await data) && data[0] ? data[0].name : "");
+          isSeller = data && data[0] ? true : false;
+        }
+        if (!isSeller) {
+          const { data, error } = await supabase
+            .from("Users") // Name of Table
+            .select()
+            .eq("account", address);
+
+          if (error) {
+            console.log(error);
+          }
+          if (data) {
+            console.log(data);
+            await setName((await data) && data[0] ? data[0].name : "");
+          }
         }
       }
     };
@@ -86,13 +102,13 @@ const ConnectWallet = () => {
           console.log(error);
         }
         if (data) {
-          console.log(data);
+          // console.log(data);
           setisSeller(data && data[0] ? true : false);
         }
       }
     };
     fetchSeller();
-  }, []);
+  }, [account]);
   return (
     <div>
       {account ? (

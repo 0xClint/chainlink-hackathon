@@ -35,17 +35,6 @@ const Dashboard = () => {
     fetchUsers();
   }, []);
 
-  // useEffect(() => {
-  //   const getAccount = async () => {
-  //     const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //     await provider.send("eth_requestAccounts", []);
-  //     const signer = await provider.getSigner();
-  //     const account = await signer.getAddress();
-  //     await setAccount(account);
-  //   };
-  //   getAccount();
-  // }, []);
-
   const filterSeller = async (data) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     await provider.send("eth_requestAccounts", []);
