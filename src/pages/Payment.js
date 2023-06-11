@@ -6,8 +6,10 @@ import { CONTRACT_ABI, CONTRACT_ADDRESS } from "../contract/constant";
 import { ethers } from "ethers";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import supabase from "../config/supabase";
+import { useMoralis } from "react-moralis";
 
 const Payment = () => {
+  const { isWeb3Enabled } = useMoralis();
   const [loader, setLoader] = useState(false);
 
   const [productData, setProductData] = useState("");
@@ -19,20 +21,22 @@ const Payment = () => {
 
   useEffect(() => {
     const fetchUserAddr = async () => {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      const signer = provider.getSigner();
-      const address = await signer.getAddress();
-      const { data, error } = await supabase
-        .from("Users") // Name of Table
-        .select()
-        .eq("account", address);
+      if (isWeb3Enabled) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
+        const { data, error } = await supabase
+          .from("Users") // Name of Table
+          .select()
+          .eq("account", address);
 
-      if (error) {
-        console.log(error);
-      }
-      if (data) {
-        setUserAddress(data[0].address);
+        if (error) {
+          console.log(error);
+        }
+        if (data) {
+          setUserAddress(data[0].address);
+        }
       }
     };
     fetchUserAddr();
@@ -73,34 +77,39 @@ const Payment = () => {
   };
   console.log(productData);
   const payNow = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-    const account = await signer.getAddress();
-    const balance = ethers.utils.formatEther(await signer.getBalance());
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const account = await signer.getAddress();
+      const balance = ethers.utils.formatEther(await signer.getBalance());
 
-    if (balance > productData.price / 1836) {
-      setLoader(true);
-      const contract = new ethers.Contract(
-        CONTRACT_ADDRESS,
-        CONTRACT_ABI,
-        signer
-      );
-      const tx = await contract.placeOrder(productData.pid, 1, {
-        value: ethers.utils.parseEther(`${productData.price / 1000000}`),
-      });
-      const receipt = await tx.wait();
-      let orderId = Number(receipt.logs[0].topics[1]);
-      console.log(orderId);
+      if (balance > productData.price / 1836) {
+        setLoader(true);
+        const contract = new ethers.Contract(
+          CONTRACT_ADDRESS,
+          CONTRACT_ABI,
+          signer
+        );
+        const tx = await contract.placeOrder(productData.pid, 1, {
+          value: ethers.utils.parseEther(`${productData.price / 1000000}`),
+        });
+        const receipt = await tx.wait();
+        let orderId = Number(receipt.logs[0].topics[1]);
+        console.log(orderId);
 
-      await saveOrder(orderId, params.id, account);
+        await saveOrder(orderId, params.id, account);
+        setLoader(false);
+        setSuccess(true);
+      } else {
+        setBalanceError(true);
+        setTimeout(() => {
+          setBalanceError(false);
+        }, 3000);
+      }
+    } catch (error) {
+      console.log(error);
       setLoader(false);
-      setSuccess(true);
-    } else {
-      setBalanceError(true);
-      setTimeout(() => {
-        setBalanceError(false);
-      }, 3000);
     }
   };
   return (
@@ -250,6 +259,10 @@ const Payment = () => {
             {balanceError
               ? "Insufficient Balance!"
               : "Please provide valid address."}
+          </p>
+          <p className="text-[#E51F1F] mt-1 mb-1 text-center">
+            {" "}
+            {!isWeb3Enabled && "To pay Please connect Metamask"}
           </p>
           <div
             onClick={() => payNow()}

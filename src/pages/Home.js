@@ -10,6 +10,7 @@ import { ArrowRight } from "../assets";
 import { Link } from "react-router-dom";
 import supabase from "../config/supabase";
 import { ethers } from "ethers";
+import { useMoralis } from "react-moralis";
 
 const cardData = [
   { id: 1 },
@@ -21,6 +22,7 @@ const cardData = [
 ];
 
 const Home = () => {
+  const { isWeb3Enabled } = useMoralis();
   const [productData, setProductData] = useState();
   const [electronics, setElectronics] = useState();
   const [isUser, setisUser] = useState(true);
@@ -51,17 +53,19 @@ const Home = () => {
   }, []);
 
   const confirmUser = async (array) => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const signer = await provider.getSigner();
-    const account = await signer.getAddress();
+    if (isWeb3Enabled) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = await provider.getSigner();
+      const account = await signer.getAddress();
 
-    let userArray = array.filter(function (el) {
-      return el.account == account;
-    });
-    if (!userArray.length) {
-      setisUser(false);
-      console.log("No User");
+      let userArray = array.filter(function (el) {
+        return el.account == account;
+      });
+      if (!userArray.length) {
+        setisUser(false);
+        console.log("No User");
+      }
     }
   };
 

@@ -32,12 +32,17 @@ const Slider = () => {
         >
           <SwiperSlide>
             <div className="slide flex justify-center items-center">
-              <img src={require("../assets/slider.png")}></img>
+              <img src={require("../assets/slider1.png")}></img>
             </div>
           </SwiperSlide>
           <SwiperSlide>
             <div className="slide flex justify-center items-center">
-              <img src={require("../assets/slider.png")}></img>
+              <img src={require("../assets/slider2.png")}></img>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide>
+            <div className="slide flex justify-center items-center">
+              <img src={require("../assets/slider3.png")}></img>
             </div>
           </SwiperSlide>
         </Swiper>

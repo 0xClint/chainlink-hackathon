@@ -35,23 +35,25 @@ const Dashboard = () => {
     fetchUsers();
   }, []);
 
-  useEffect(() => {
-    const getAccount = async () => {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      const signer = await provider.getSigner();
-      const account = await signer.getAddress();
-      await setAccount(account);
-    };
-    getAccount();
-  }, []);
+  // useEffect(() => {
+  //   const getAccount = async () => {
+  //     const provider = new ethers.providers.Web3Provider(window.ethereum);
+  //     await provider.send("eth_requestAccounts", []);
+  //     const signer = await provider.getSigner();
+  //     const account = await signer.getAddress();
+  //     await setAccount(account);
+  //   };
+  //   getAccount();
+  // }, []);
 
   const filterSeller = async (data) => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = await provider.getSigner();
+    const account = await signer.getAddress();
+    console.log(account);
     let sellerData = data.filter((el) => {
-      if (
-        el.Products.Sellers.account ==
-        "0xe468c2035adD65e1Feafeb6Ba4695990f7AB8F17"
-      ) {
+      if (el.Products.Sellers.account == account) {
         return el;
       }
     });
@@ -59,28 +61,29 @@ const Dashboard = () => {
     return sellerData;
   };
 
-  const assignDelivery = async (orderId) => {
+  const assignDelivery = async (orderId, pId) => {
     // if (orderID) {
     setLoader(true);
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-    const account = signer.getAddress();
-    const contract = new ethers.Contract(
-      CONTRACT_ADDRESS,
-      CONTRACT_ABI,
-      signer
-    );
-    console.log(sellerData);
-    const tx1 = await contract.assignDeliverAgent(orderId, account);
-    const receipt1 = await tx1.wait();
-    console.log(receipt1);
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const account = signer.getAddress();
+      const contract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        CONTRACT_ABI,
+        signer
+      );
 
-    const tx2 = await contract.deleveryReached(orderId);
-    const receipt2 = await tx2.wait();
-    console.log(receipt2);
+      const tx2 = await contract.deleveryReached(orderId);
+      const receipt2 = await tx2.wait();
+      console.log(receipt2);
+
+      navigate(`/delivery/${pId}`);
+    } catch (error) {
+      console.log(error);
+    }
     setLoader(false);
-    navigate("/delivery");
     // }
   };
 
@@ -150,7 +153,7 @@ const Dashboard = () => {
                     <div className=" flex  flex-col gap-5">
                       <div className="">
                         <button
-                          onClick={() => assignDelivery(item.id)}
+                          onClick={() => assignDelivery(item.id, item.pid)}
                           className="text-[1.3rem] font-medium cursor-pointer text-[#ffffff] text-center bg-primaryColor py-3 px-4 rounded-lg  hover:bg-[#007AAF]"
                         >
                           Reached to Location

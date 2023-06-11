@@ -45,45 +45,50 @@ const ConnectWallet = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      const signer = provider.getSigner();
-      const address = await signer.getAddress();
+      if (isWeb3Enabled) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
+        console.log(address + "sd");
 
-      const { data, error } = await supabase
-        .from("Users") // Name of Table
-        .select()
-        .eq("account", address);
+        const { data, error } = await supabase
+          .from("Users") // Name of Table
+          .select()
+          .eq("account", address);
 
-      if (error) {
-        console.log(error);
-      }
-      if (data) {
-        // console.log(data);
-        setName(data && data[0] ? data[0].name : "");
+        if (error) {
+          console.log(error);
+        }
+        if (data) {
+          console.log(data);
+          await setName((await data) && data[0] ? data[0].name : "");
+        }
       }
     };
     fetchUsers();
-  }, []);
+  }, [account]);
 
   useEffect(() => {
     const fetchSeller = async () => {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      const signer = provider.getSigner();
-      const address = await signer.getAddress();
+      if (isWeb3Enabled) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
 
-      const { data, error } = await supabase
-        .from("Sellers") // Name of Table
-        .select()
-        .eq("account", address);
+        const { data, error } = await supabase
+          .from("Sellers") // Name of Table
+          .select()
+          .eq("account", address);
 
-      if (error) {
-        console.log(error);
-      }
-      if (data) {
-        console.log(data);
-        setisSeller(data && data[0] ? true : false);
+        if (error) {
+          console.log(error);
+        }
+        if (data) {
+          console.log(data);
+          setisSeller(data && data[0] ? true : false);
+        }
       }
     };
     fetchSeller();
