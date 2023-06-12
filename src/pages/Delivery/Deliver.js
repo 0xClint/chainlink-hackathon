@@ -12,7 +12,7 @@ const Deliver = () => {
   const [loader, setLoader] = useState(false);
   const [productData, setProductData] = useState("");
   const [OTP, setOTP] = useState("");
-  const [success, setSuccess] = useState(true);
+  const [success, setSuccess] = useState(false);
   const params = useParams();
 
   useEffect(() => {

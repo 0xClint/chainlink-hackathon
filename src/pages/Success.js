@@ -90,7 +90,7 @@ const Success = () => {
       await setOTP(OTP);
       console.log("OTP: " + OTP);
       setSuccess(true);
-    }, 50000);
+    }, 60000);
 
     // ***********************************************
     const intervalId = setInterval(() => {
@@ -101,7 +101,7 @@ const Success = () => {
       clearInterval(intervalId);
       // setSuccess(false);
       // setLoader(false);
-    }, 80000);
+    }, 90000);
     // ***********************************************
   };
 
