@@ -176,7 +176,7 @@ const Deliver = () => {
           </p>
         </div>
       </div>
-      <Footer />
+      // <Footer />
     </div>
   );
 };
