@@ -75,7 +75,7 @@ const Success = () => {
     );
     const receipt1 = await tx1.wait();
     // console.log(receipt1);
-    let reqID = await converter.hexToDec(receipt1.events[2]);
+    let reqID = await converter.hexToDec(receipt1);
     console.log("redID: " + reqID);
 
     setTimeout(async () => {
@@ -86,7 +86,7 @@ const Success = () => {
         productData.Orders[productData.Orders.length - 1].id
       );
       const receipt2 = await tx2.wait();
-      let OTP = await converter.hexToDec(receipt2.events[0]);
+      let OTP = await converter.hexToDec(receipt2);
       await setOTP(OTP);
       console.log("OTP: " + OTP);
       setSuccess(true);
