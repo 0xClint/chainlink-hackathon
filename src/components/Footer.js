@@ -10,7 +10,7 @@ const Footer = () => {
       >
         <Github className="h-7 cursor-pointer" />
       </a>
-      | Made with ❤️ at ChainLink Hackathon
+    
     </div>
   );
 };
